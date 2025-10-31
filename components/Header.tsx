@@ -24,7 +24,7 @@ export default function Header() {
             <Link href="/" className="flex items-center">
               <span>
                 <Image
-                  src="/logo.svg"
+                  src="/assets/svgs/logo.svg"
                   alt="AgroGame Logo"
                   width={140}
                   height={38}
@@ -54,13 +54,13 @@ export default function Header() {
           <div className="hidden lg:flex items-center space-x-3">
             <Link
               href="#signup"
-              className="bg-[#0b63e5] text-white px-4 py-2 rounded-sm text-sm font-medium hover:bg-[#0059cf] transition-colors duration-200"
+              className="bg-[#0b63e5] text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-[#0059cf] transition-colors duration-200"
             >
               Quero Fazer Parte Do Agro Game
             </Link>
             <Link
               href="#login"
-              className="bg-transparent text-[#0b63e5] px-4 py-2 rounded-sm text-sm border border-[#0b63e5] font-medium hover:bg-[#0b63e5] hover:text-white transition-colors duration-200"
+              className="bg-transparent text-[#0b63e5] px-4 py-2 rounded-md text-sm border border-[#0b63e5] font-medium hover:bg-[#0b63e5] hover:text-white transition-colors duration-200"
             >
               Login
             </Link>
