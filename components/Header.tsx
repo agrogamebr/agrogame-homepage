@@ -22,27 +22,27 @@ export default function Header() {
         <div className="flex h-16 items-center justify-between">
           <div className="shrink-0">
             <Link href="/" className="flex items-center">
-              <span className="text-2xl font-bold text-green-600">
+              <span>
                 <Image
-                  className="dark"
                   src="/logo.svg"
                   alt="AgroGame Logo"
-                  width={180}
-                  height={49}
+                  width={140}
+                  height={38}
                   priority
+                  className="w-[140px] h-[38px] sm:w-40 sm:h-[43px] md:w-[180px] md:h-[49px]"
                 />
               </span>
             </Link>
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:block">
+          <div className="hidden lg:block">
             <div className="ml-10 flex items-baseline space-x-4">
               {navigation.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-green-600 transition-colors duration-200"
+                  className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-[#0b63e5] transition-colors duration-200"
                 >
                   {item.name}
                 </Link>
@@ -50,22 +50,29 @@ export default function Header() {
             </div>
           </div>
 
-          {/* CTA Button */}
-          <div className="hidden md:block">
+          {/* CTA Buttons */}
+          <div className="hidden lg:flex items-center space-x-3">
             <Link
-              href="#contact"
+              href="#signup"
               className="bg-[#0b63e5] text-white px-4 py-2 rounded-sm text-sm font-medium hover:bg-[#0059cf] transition-colors duration-200"
             >
-              Quero Fazer Parte do Agro Game
+              Quero Fazer Parte Do Agro Game
+            </Link>
+            <Link
+              href="#login"
+              className="bg-transparent text-[#0b63e5] px-4 py-2 rounded-sm text-sm border border-[#0b63e5] font-medium hover:bg-[#0b63e5] hover:text-white transition-colors duration-200"
+            >
+              Login
             </Link>
           </div>
 
-          <div className="hidden md:block">
+          {/* Tablet CTA - Only main button */}
+          <div className="hidden md:block lg:hidden">
             <Link
-              href="#contact"
-              className="bg-transparent text-[#0b63e5] px-4 py-2 rounded-sm text-sm border border-[#0b63e5] font-medium hover:bg-[#0b63e5] hover:text-white transition-colors duration-200 ml-5"
+              href="#signup"
+              className="bg-[#0b63e5] text-white px-3 py-2 rounded-sm text-xs font-medium hover:bg-[#0059cf] transition-colors duration-200"
             >
-              Login
+              Fazer Parte
             </Link>
           </div>
 
@@ -98,13 +105,22 @@ export default function Header() {
                   {item.name}
                 </Link>
               ))}
-              <Link
-                href="#contact"
-                className="block w-full text-center bg-[#0b63e5] text-white px-3 py-2 rounded-lg text-base font-medium hover:bg-[#0059cf] transition-colors duration-200 mt-4"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Quero Fazer Parte do Agro Game
-              </Link>
+              <div className="pt-4 space-y-2">
+                <Link
+                  href="#signup"
+                  className="block w-full text-center bg-[#0b63e5] text-white px-3 py-2 rounded-lg text-base font-medium hover:bg-[#0059cf] transition-colors duration-200"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Fazer Parte
+                </Link>
+                <Link
+                  href="#login"
+                  className="block w-full text-center bg-transparent text-[#0b63e5] px-3 py-2 rounded-lg text-base border border-[#0b63e5] font-medium hover:bg-[#0b63e5] hover:text-white transition-colors duration-200"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Login
+                </Link>
+              </div>
             </div>
           </div>
         )}
