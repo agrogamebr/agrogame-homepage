@@ -1,4 +1,5 @@
 steps:
+  # Step 1: Build da imagem Docker
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'build'
@@ -10,18 +11,36 @@ steps:
       - '$_ARTIFACT_REGISTRY_REPO/$_IMAGE_NAME:develop'
       - '.'
 
+  # Step 2: Push da imagem com SHORT_SHA
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
       - '$_ARTIFACT_REGISTRY_REPO/$_IMAGE_NAME:$SHORT_SHA'
 
+  # Step 3: Push da imagem com tag develop
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
       - '$_ARTIFACT_REGISTRY_REPO/$_IMAGE_NAME:develop'
+
+  # Step 4: Deploy no Cloud Run
+  - name: 'gcr.io/cloud-builders/run'
+    args:
+      - 'deploy'
+      - '${_CLOUD_RUN_SERVICE}'
+      - '--image'
+      - '${_ARTIFACT_REGISTRY_REPO}/${_IMAGE_NAME}:${SHORT_SHA}'
+      - '--region'
+      - 'us-central1'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
 
 images:
   - '$_ARTIFACT_REGISTRY_REPO/$_IMAGE_NAME:$SHORT_SHA'
   - '$_ARTIFACT_REGISTRY_REPO/$_IMAGE_NAME:develop'
 
 timeout: '1800s'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
