@@ -1,35 +1,35 @@
 steps:
-  # Step 1: Build da imagem Docker
+  # Step 0: Build da imagem Docker
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'build'
       - '--build-arg'
       - 'BUILDKIT_INLINE_CACHE=1'
       - '-t'
-      - '$_ARTIFACT_REGISTRY_REPO/$_IMAGE_NAME:$SHORT_SHA'
+      - 'us-central1-docker.pkg.dev/agrogame/agrogame-repo/agrogame-homepage:$SHORT_SHA'
       - '-t'
-      - '$_ARTIFACT_REGISTRY_REPO/$_IMAGE_NAME:develop'
+      - 'us-central1-docker.pkg.dev/agrogame/agrogame-repo/agrogame-homepage:develop'
       - '.'
 
-  # Step 2: Push da imagem com SHORT_SHA
+  # Step 1: Push da imagem com SHORT_SHA
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
-      - '$_ARTIFACT_REGISTRY_REPO/$_IMAGE_NAME:$SHORT_SHA'
+      - 'us-central1-docker.pkg.dev/agrogame/agrogame-repo/agrogame-homepage:$SHORT_SHA'
 
-  # Step 3: Push da imagem com tag develop
+  # Step 2: Push da imagem com tag develop
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
-      - '$_ARTIFACT_REGISTRY_REPO/$_IMAGE_NAME:develop'
+      - 'us-central1-docker.pkg.dev/agrogame/agrogame-repo/agrogame-homepage:develop'
 
-  # Step 4: Deploy no Cloud Run
+  # Step 3: Deploy no Cloud Run
   - name: 'gcr.io/cloud-builders/run'
     args:
       - 'deploy'
       - '${_CLOUD_RUN_SERVICE}'
       - '--image'
-      - '${_ARTIFACT_REGISTRY_REPO}/${_IMAGE_NAME}:${SHORT_SHA}'
+      - 'us-central1-docker.pkg.dev/agrogame/agrogame-repo/agrogame-homepage:${SHORT_SHA}'
       - '--region'
       - 'us-central1'
       - '--platform'
@@ -37,8 +37,8 @@ steps:
       - '--allow-unauthenticated'
 
 images:
-  - '$_ARTIFACT_REGISTRY_REPO/$_IMAGE_NAME:$SHORT_SHA'
-  - '$_ARTIFACT_REGISTRY_REPO/$_IMAGE_NAME:develop'
+  - 'us-central1-docker.pkg.dev/agrogame/agrogame-repo/agrogame-homepage:$SHORT_SHA'
+  - 'us-central1-docker.pkg.dev/agrogame/agrogame-repo/agrogame-homepage:develop'
 
 timeout: '1800s'
 
