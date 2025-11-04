@@ -1,0 +1,27 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '--build-arg'
+      - 'BUILDKIT_INLINE_CACHE=1'
+      - '-t'
+      - '$_ARTIFACT_REGISTRY_REPO/$_IMAGE_NAME:$SHORT_SHA'
+      - '-t'
+      - '$_ARTIFACT_REGISTRY_REPO/$_IMAGE_NAME:develop'
+      - '.'
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - '$_ARTIFACT_REGISTRY_REPO/$_IMAGE_NAME:$SHORT_SHA'
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - '$_ARTIFACT_REGISTRY_REPO/$_IMAGE_NAME:develop'
+
+images:
+  - '$_ARTIFACT_REGISTRY_REPO/$_IMAGE_NAME:$SHORT_SHA'
+  - '$_ARTIFACT_REGISTRY_REPO/$_IMAGE_NAME:develop'
+
+timeout: '1800s'
