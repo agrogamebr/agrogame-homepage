@@ -8,9 +8,6 @@ export default function Home() {
       <Header />
       <Hero />
       <HowItWorks />
-      
-      {/* Outras seções */}
-      
     </div>
   );
 }
