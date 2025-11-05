@@ -50,7 +50,6 @@ export default function Header() {
             </div>
           </div>
 
-          {/* CTA Buttons */}
           <div className="hidden lg:flex items-center space-x-3">
             <Link
               href="#signup"
@@ -66,7 +65,6 @@ export default function Header() {
             </Link>
           </div>
 
-          {/* Tablet CTA - Only main button */}
           <div className="hidden md:block lg:hidden">
             <Link
               href="#signup"
