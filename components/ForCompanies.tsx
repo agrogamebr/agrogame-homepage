@@ -1,0 +1,138 @@
+import Image from "next/image";
+import Link from "next/link";
+
+export default function ForCompanies() {
+  const benefits = [
+    {
+      id: 1,
+      icon: "/assets/svgs/penNibStraight.svg",
+      title: "Redução de custos operacionais:",
+      description: "Acesse descontos corporativos em insumos agrícolas, maquinário, seguros e serviços especializados através da rede de parceiros Agrogame.",
+      bgColor: "bg-[#F0F5FF]"
+    },
+    {
+      id: 2,
+      icon: "/assets/svgs/database.svg", 
+      title: "Fortalecimento do relacionamento:",
+      description: "Ofereça benefícios exclusivos aos produtores rurais vinculados à sua empresa, aumentando fidelização e engajamento contínuo.",
+      bgColor: "bg-[#FEEDFA]"
+    },
+    {
+      id: 3,
+      icon: "/assets/svgs/bug.svg",
+      title: "Dados e insights estratégicos:",
+      description: "Monitore o uso de benefícios, identifique padrões de comportamento e tome decisões baseadas em dados reais do campo.",
+      bgColor: "bg-[#F5F6F7]"
+    },
+    {
+      id: 4,
+      icon: "/assets/svgs/package.svg",
+      title: "Crescimento sustentável:",
+      description: "Construa um ecossistema de relacionamento que transforma produtores em parceiros de longo prazo, gerando valor compartilhado.",
+      bgColor: "bg-[#E8FFF4]"
+    }
+  ];
+
+  return (
+    <section className="py-16 bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-12 items-start">
+          <div className="lg:pr-8">
+            <h2 className="font-bold text-[28px] sm:text-[36px] md:text-[48px] lg:text-[56px] 
+                          leading-none sm:leading-none md:leading-none lg:leading-none 
+                          tracking-[-2%] text-[#061C3D] mb-6">
+              Empresas do agro que crescem juntas, crescem mais rápido
+            </h2>
+            
+            <p className="font-normal text-[14px] sm:text-[16px] md:text-[17px] lg:text-[18px]
+                         leading-relaxed
+                         tracking-[0%] text-[#061C3D] mb-8">
+              O Agrogame é o hub de conexão entre sua empresa e um ecossistema de parceiros estratégicos que impulsionam resultados no campo.
+            </p>
+
+            <Link
+              href="#cadastro-empresa"
+              className="inline-flex items-center bg-[#0b63e5] text-white 
+                        px-8 py-3 rounded-lg gap-3
+                        font-semibold hover:bg-[#0059cf] transition-colors duration-200
+                        text-sm lg:text-base
+                        w-fit"
+            >
+              Quero Fazer Parte Do Ecossistema Agrogame
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-6">
+            <div className="flex flex-col gap-6">
+              {benefits.filter(benefit => benefit.id === 1 || benefit.id === 3).map((benefit) => (
+                <div 
+                  key={benefit.id}
+                  className={`${benefit.bgColor} rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200
+                            w-full sm:w-[312px] h-[280px] flex flex-col
+                            ${benefit.id === 3 ? 'mb-12' : ''}`}
+                >
+                  <div className="mb-4 shrink-0">
+                    <div className="w-12 h-12 rounded-lg flex items-center justify-center">
+                      <Image
+                        src={benefit.icon}
+                        alt={benefit.title}
+                        width={32}
+                        height={32}
+                        className="w-8 h-8"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col flex-1">
+                    <h3 className="font-medium text-[24px] leading-[26px] tracking-[0%] text-[#061C3D] mb-3 shrink-0">
+                      {benefit.title}
+                    </h3>
+
+                    <p className="font-normal text-[14px] leading-5 tracking-[0%] text-[#42526B] flex-1" style={{ marginBottom: '1px' }}>
+                      {benefit.description}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex flex-col gap-6 mt-0 sm:mt-12">
+              {benefits.filter(benefit => benefit.id === 2 || benefit.id === 4).map((benefit) => (
+                <div 
+                  key={benefit.id}
+                  className={`${benefit.bgColor} rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200
+                            w-full sm:w-[312px] h-[280px] flex flex-col`}
+                >
+                  <div className="mb-4 shrink-0">
+                    <div className="w-12 h-12 rounded-lg flex items-center justify-center">
+                      <Image
+                        src={benefit.icon}
+                        alt={benefit.title}
+                        width={32}
+                        height={32}
+                        className="w-8 h-8"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col flex-1">
+                    <h3 className="font-medium text-[24px] leading-[26px] tracking-[0%] text-[#061C3D] mb-3 shrink-0">
+                      {benefit.title}
+                    </h3>
+                    
+                    <p className="font-normal text-[14px] leading-5 tracking-[0%] text-[#42526B] flex-1" style={{ marginBottom: '1px' }}>
+                      {benefit.description}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
