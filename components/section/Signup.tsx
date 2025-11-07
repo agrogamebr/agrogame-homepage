@@ -1,10 +1,25 @@
 "use client";
 
 import { useState } from "react";
-import { SignupType } from "@/components/ui/signuptype";
+import { SignupType } from "@/components/common/signuptype";
+import CompanySignupForm from "@/components/forms/CompanySignupForm";
+import { CompanySignupData } from "@/lib/schemas";
+import { ProducerSignupData } from "@/lib/schemas-producer";
 
 export default function SignupSection() {
   const [selectedType, setSelectedType] = useState<boolean>(false); // false = empresa, true = produtor
+
+  const handleCompanySignup = (data: CompanySignupData) => {
+    console.log("Company registration:", data);
+    // TODO: Implementar integração com API
+    alert("Cadastro de empresa realizado com sucesso!");
+  };
+
+  const handleProducerSignup = (data: ProducerSignupData) => {
+    console.log("Producer registration:", data);
+    // TODO: Implementar integração com API
+    alert("Cadastro de produtor realizado com sucesso!");
+  };
 
   return (
     <section className="bg-white py-20">
@@ -27,16 +42,11 @@ export default function SignupSection() {
             />
           </div>
 
-          <div className="mt-8">
-            {!selectedType && (
-              <p className="text-gray-600 text-sm">
-                Cadastre sua empresa e tenha acesso a soluções completas para o agronegócio
-              </p>
-            )}
-            {selectedType && (
-              <p className="text-gray-600 text-sm">
-                Cadastre-se como produtor rural e transforme sua propriedade
-              </p>
+          <div className="mt-12">
+            {!selectedType ? (
+              <CompanySignupForm onSubmit={handleCompanySignup} />
+            ) : (
+              <CompanySignupForm onSubmit={handleCompanySignup} />
             )}
           </div>
         </div>
