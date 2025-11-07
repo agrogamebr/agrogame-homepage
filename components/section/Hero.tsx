@@ -10,7 +10,7 @@ export default function Hero() {
           {/* Left Content */}
           <div className="lg:pr-8">
             {/* Badge */}
-            <div className="inline-flex items-center bg-[#FFE9BD] backdrop-blur-sm rounded-3xl px-4 py-2 text-sm font-medium text-gray-900 mb-8">
+            <div className="inline-flex items-center bg-orange-100 backdrop-blur-sm rounded-3xl px-4 py-2 text-sm font-medium text-gray-900 mb-8">
               BEM-VINDO AO AGRO GAME
             </div>
 
@@ -30,14 +30,14 @@ export default function Hero() {
             <div className="flex flex-col sm:flex-row gap-4 mb-8">
               <Link
                 href="#cadastro"
-                className="bg-[#0b63e5] text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-[#0059cf] transition-colors duration-200 inline-flex items-center justify-center gap-2 min-w-fit"
+                className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors duration-200 inline-flex items-center justify-center gap-2 min-w-fit"
               >
                 Cadastrar Minha Empresa
               </Link>
               
               <Link
                 href="#produtor"
-                className="bg-[#F0F5FF] text-[#0b63e5] px-4 py-2 rounded-md text-sm font-medium hover:bg-[#0b63e5] hover:text-white transition-colors duration-200 inline-flex items-center justify-center gap-2 min-w-fit"
+                className="bg-blue-50 text-blue-600 px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-600 hover:text-white transition-colors duration-200 inline-flex items-center justify-center gap-2 min-w-fit"
               >
                 <FaPlay className="w-3 h-3" /> Sou Produtor Rural
               </Link>

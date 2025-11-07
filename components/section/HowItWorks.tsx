@@ -42,14 +42,14 @@ export default function HowItWorks() {
             </div>
 
             <div className="flex items-center ml-8">
-              <h2 className="w-[616px] h-[120px] flex items-center font-bold text-[56px] leading-[60px] tracking-[-0.02em] text-[#061C3D]">
+              <h2 className="w-[616px] h-[120px] flex items-center font-bold text-[56px] leading-[60px] tracking-[-0.02em] text-blue-950">
                 Como o Agro Game funciona?
               </h2>
             </div>
           </div>
 
           <div className="shrink-0">
-            <p className="w-[312px] h-[84px] font-normal text-[20px] leading-7 tracking-[0%] text-[#061C3D] text-left flex items-center justify-end">
+            <p className="w-[312px] h-[84px] font-normal text-[20px] leading-7 tracking-[0%] text-blue-950 text-left flex items-center justify-end">
               Em poucos cliques, sua empresa 
               se conecta ao futuro do 
               agronegócio.
@@ -70,13 +70,13 @@ export default function HowItWorks() {
             </div>
 
             <div>
-              <h2 className="font-bold text-[32px] leading-9 sm:text-[40px] sm:leading-11 tracking-[-0.02em] text-[#061C3D]">
+              <h2 className="font-bold text-[32px] leading-9 sm:text-[40px] sm:leading-11 tracking-[-0.02em] text-blue-950">
                 Como o Agro Game funciona?
               </h2>
             </div>
 
             <div>
-              <p className="font-normal text-[16px] leading-6 sm:text-[18px] sm:leading-[26px] tracking-[0%] text-[#061C3D] max-w-[280px] sm:max-w-[320px]">
+              <p className="font-normal text-[16px] leading-6 sm:text-[18px] sm:leading-[26px] tracking-[0%] text-blue-950 max-w-[280px] sm:max-w-[320px]">
                 Em poucos cliques, sua empresa 
                 se conecta ao futuro do 
                 agronegócio.
@@ -101,11 +101,11 @@ export default function HowItWorks() {
                 />
               </div>
 
-              <h3 className="text-lg sm:text-xl font-semibold text-[#061C3D] mb-3 sm:mb-4">
+              <h3 className="text-lg sm:text-xl font-semibold text-blue-950 mb-3 sm:mb-4">
                 {step.title}
               </h3>
 
-              <p className="text-[#061C3D] text-xs sm:text-sm leading-relaxed mb-4 sm:mb-6 grow">
+              <p className="text-blue-950 text-xs sm:text-sm leading-relaxed mb-4 sm:mb-6 grow">
                 {step.description}
               </p>
 

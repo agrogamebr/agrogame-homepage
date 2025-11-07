@@ -8,28 +8,28 @@ export default function ForCompanies() {
       icon: "/assets/svgs/penNibStraight.svg",
       title: "Redução de custos operacionais:",
       description: "Acesse descontos corporativos em insumos agrícolas, maquinário, seguros e serviços especializados através da rede de parceiros Agrogame.",
-      bgColor: "bg-[#F0F5FF]"
+      bgColor: "bg-blue-50"
     },
     {
       id: 2,
       icon: "/assets/svgs/database.svg", 
       title: "Fortalecimento do relacionamento:",
       description: "Ofereça benefícios exclusivos aos produtores rurais vinculados à sua empresa, aumentando fidelização e engajamento contínuo.",
-      bgColor: "bg-[#FEEDFA]"
+      bgColor: "bg-fuchsia-50"
     },
     {
       id: 3,
       icon: "/assets/svgs/bug.svg",
       title: "Dados e insights estratégicos:",
       description: "Monitore o uso de benefícios, identifique padrões de comportamento e tome decisões baseadas em dados reais do campo.",
-      bgColor: "bg-[#F5F6F7]"
+      bgColor: "bg-gray-100"
     },
     {
       id: 4,
       icon: "/assets/svgs/package.svg",
       title: "Crescimento sustentável:",
       description: "Construa um ecossistema de relacionamento que transforma produtores em parceiros de longo prazo, gerando valor compartilhado.",
-      bgColor: "bg-[#E8FFF4]"
+      bgColor: "bg-emerald-50"
     }
   ];
 
@@ -40,21 +40,21 @@ export default function ForCompanies() {
           <div className="lg:pr-8">
             <h2 className="font-bold text-[28px] sm:text-[36px] md:text-[48px] lg:text-[56px] 
                           leading-none sm:leading-none md:leading-none lg:leading-none 
-                          tracking-[-2%] text-[#061C3D] mb-6">
+                          tracking-[-2%] text-blue-950 mb-6">
               Empresas do agro que crescem juntas, crescem mais rápido
             </h2>
             
             <p className="font-normal text-[14px] sm:text-[16px] md:text-[17px] lg:text-[18px]
                          leading-relaxed
-                         tracking-[0%] text-[#061C3D] mb-8">
+                         tracking-[0%] text-blue-950 mb-8">
               O Agrogame é o hub de conexão entre sua empresa e um ecossistema de parceiros estratégicos que impulsionam resultados no campo.
             </p>
 
             <Link
               href="#cadastro-empresa"
-              className="inline-flex items-center bg-[#0b63e5] text-white 
+              className="inline-flex items-center bg-blue-600 text-white 
                         px-8 py-3 rounded-lg gap-3
-                        font-semibold hover:bg-[#0059cf] transition-colors duration-200
+                        font-semibold hover:bg-blue-700 transition-colors duration-200
                         text-sm lg:text-base
                         w-fit"
             >
@@ -87,11 +87,11 @@ export default function ForCompanies() {
                   </div>
 
                   <div className="flex flex-col flex-1">
-                    <h3 className="font-medium text-[24px] leading-[26px] tracking-[0%] text-[#061C3D] mb-3 shrink-0">
+                    <h3 className="font-medium text-[24px] leading-[26px] tracking-[0%] text-blue-950 mb-3 shrink-0">
                       {benefit.title}
                     </h3>
 
-                    <p className="font-normal text-[14px] leading-5 tracking-[0%] text-[#42526B] flex-1" style={{ marginBottom: '1px' }}>
+                    <p className="font-normal text-[14px] leading-5 tracking-[0%] text-slate-600 flex-1" style={{ marginBottom: '1px' }}>
                       {benefit.description}
                     </p>
                   </div>
@@ -119,11 +119,11 @@ export default function ForCompanies() {
                   </div>
 
                   <div className="flex flex-col flex-1">
-                    <h3 className="font-medium text-[24px] leading-[26px] tracking-[0%] text-[#061C3D] mb-3 shrink-0">
+                    <h3 className="font-medium text-[24px] leading-[26px] tracking-[0%] text-blue-950 mb-3 shrink-0">
                       {benefit.title}
                     </h3>
                     
-                    <p className="font-normal text-[14px] leading-5 tracking-[0%] text-[#42526B] flex-1" style={{ marginBottom: '1px' }}>
+                    <p className="font-normal text-[14px] leading-5 tracking-[0%] text-slate-600 flex-1" style={{ marginBottom: '1px' }}>
                       {benefit.description}
                     </p>
                   </div>
