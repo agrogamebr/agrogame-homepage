@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import FeatureCard from "@/components/common/feature-card";
 
 export default function ForCompanies() {
   const benefits = [
@@ -68,66 +68,29 @@ export default function ForCompanies() {
           <div className="flex flex-col sm:flex-row gap-6">
             <div className="flex flex-col gap-6">
               {benefits.filter(benefit => benefit.id === 1 || benefit.id === 3).map((benefit) => (
-                <div 
+                <FeatureCard
                   key={benefit.id}
-                  className={`${benefit.bgColor} rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200
-                            w-full sm:w-[312px] h-[280px] flex flex-col
-                            ${benefit.id === 3 ? 'mb-12' : ''}`}
-                >
-                  <div className="mb-4 shrink-0">
-                    <div className="w-12 h-12 rounded-lg flex items-center justify-center">
-                      <Image
-                        src={benefit.icon}
-                        alt={benefit.title}
-                        width={32}
-                        height={32}
-                        className="w-8 h-8"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col flex-1">
-                    <h3 className="font-medium text-[24px] leading-[26px] tracking-[0%] text-blue-950 mb-3 shrink-0">
-                      {benefit.title}
-                    </h3>
-
-                    <p className="font-normal text-[14px] leading-5 tracking-[0%] text-slate-600 flex-1" style={{ marginBottom: '1px' }}>
-                      {benefit.description}
-                    </p>
-                  </div>
-                </div>
+                  title={benefit.title}
+                  description={benefit.description}
+                  icon={benefit.icon}
+                  backgroundColor={benefit.bgColor}
+                  iconSize="md"
+                  className={`w-full sm:w-[312px] h-[280px] ${benefit.id === 3 ? 'mb-12' : ''}`}
+                />
               ))}
             </div>
 
             <div className="flex flex-col gap-6 mt-0 sm:mt-12">
               {benefits.filter(benefit => benefit.id === 2 || benefit.id === 4).map((benefit) => (
-                <div 
+                <FeatureCard
                   key={benefit.id}
-                  className={`${benefit.bgColor} rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200
-                            w-full sm:w-[312px] h-[280px] flex flex-col`}
-                >
-                  <div className="mb-4 shrink-0">
-                    <div className="w-12 h-12 rounded-lg flex items-center justify-center">
-                      <Image
-                        src={benefit.icon}
-                        alt={benefit.title}
-                        width={32}
-                        height={32}
-                        className="w-8 h-8"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col flex-1">
-                    <h3 className="font-medium text-[24px] leading-[26px] tracking-[0%] text-blue-950 mb-3 shrink-0">
-                      {benefit.title}
-                    </h3>
-                    
-                    <p className="font-normal text-[14px] leading-5 tracking-[0%] text-slate-600 flex-1" style={{ marginBottom: '1px' }}>
-                      {benefit.description}
-                    </p>
-                  </div>
-                </div>
+                  title={benefit.title}
+                  description={benefit.description}
+                  icon={benefit.icon}
+                  backgroundColor={benefit.bgColor}
+                  iconSize="md"
+                  className="w-full sm:w-[312px] h-[280px]"
+                />
               ))}
             </div>
           </div>

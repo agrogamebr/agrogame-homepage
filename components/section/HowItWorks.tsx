@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import FeatureCard from "@/components/common/feature-card";
 
 export default function HowItWorks() {
   const steps = [
@@ -87,40 +88,26 @@ export default function HowItWorks() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
           {steps.map((step) => (
-            <div 
+            <FeatureCard
               key={step.id}
-              className={`${step.bgColor} rounded-3xl p-4 sm:p-6 md:p-8 transition-transform hover:scale-105 flex flex-col h-full`}
+              title={step.title}
+              description={step.description}
+              icon={step.icon}
+              backgroundColor={step.bgColor}
+              iconSize="xl"
+              padding="p-4 sm:p-6 md:p-8"
+              className="h-full"
             >
-              <div className="flex justify-start mb-4 sm:mb-6">
-                <Image
-                  src={step.icon}
-                  alt={step.title}
-                  width={148}
-                  height={148}
-                  className="w-20 h-20 sm:w-[100px] sm:h-[100px] md:w-[120px] md:h-[120px] lg:w-[148px] lg:h-[148px]"
-                />
-              </div>
-
-              <h3 className="text-lg sm:text-xl font-semibold text-blue-950 mb-3 sm:mb-4">
-                {step.title}
-              </h3>
-
-              <p className="text-blue-950 text-xs sm:text-sm leading-relaxed mb-4 sm:mb-6 grow">
-                {step.description}
-              </p>
-
-              <div className="mt-auto">
-                <Link
-                  href={`#step-${step.id}`}
-                  className="inline-flex items-center bg-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-md text-blue-600 font-medium text-xs sm:text-sm hover:text-blue-700 transition-colors"
-                >
-                  Learn More
-                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </Link>
-              </div>
-            </div>
+              <Link
+                href={`#step-${step.id}`}
+                className="inline-flex items-center bg-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-md text-blue-600 font-medium text-xs sm:text-sm hover:text-blue-700 transition-colors"
+              >
+                Learn More
+                <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
+            </FeatureCard>
           ))}
         </div>
       </div>
