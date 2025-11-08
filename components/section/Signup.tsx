@@ -55,7 +55,7 @@ export default function SignupSection() {
 
   return (
     <>
-      <section className="bg-gray-50 py-20">
+      <section className="bg-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-blue-950 mb-6">
