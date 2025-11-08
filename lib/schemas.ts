@@ -17,7 +17,7 @@ export const companySignupSchema = z.object({
     .min(1, "Selecione um ramo de atividade"),
   whatsapp: z
     .string()
-    .min(15, "Telefone deve ter pelo menos 11 dígitos")
+    .min(11, "Telefone deve ter pelo menos 11 dígitos")
     .regex(/^\d{2} \d{4,5} \d{4}$/, "Telefone deve estar no formato XX XXXXX XXXX"),
   address: z
     .string()
@@ -25,7 +25,7 @@ export const companySignupSchema = z.object({
     .max(200, "Endereço deve ter no máximo 200 caracteres"),
   state: z
     .string()
-    .min(1, "Selecione um estado"),
+    .min(2, "Selecione um estado"),
   city: z
     .string()
     .min(2, "Cidade deve ter pelo menos 2 caracteres")
@@ -45,4 +45,55 @@ export const companySignupSchema = z.object({
     .refine((val) => val === true, "Você deve aceitar os termos"),
 });
 
+export const companyApiSchema = z.object({
+  fullCompanyName: z.string(),
+  fantasyName: z.string().optional(),
+  email1: z.string().email(),
+  email2: z.string().email().optional(),
+  phone1: z.string(),
+  phone2: z.string().optional(),
+  address: z.string(),
+  city: z.string(),
+  state: z.string(),
+  country: z.string().default("Brasil"),
+  responsibleName: z.string().optional(),
+  responsiblePhone: z.string().optional(),
+  documentos: z.array(z.object({
+    type: z.string(),
+    documentNumber: z.string(),
+    document: z.string(),
+    primary: z.boolean()
+  })),
+  segment: z.string(),
+  companyTypeId: z.number().optional(),
+  segmentoId: z.number().optional(),
+  adminPassword: z.string(),
+  aceiteTermos: z.boolean()
+});
+
 export type CompanySignupData = z.infer<typeof companySignupSchema>;
+export type CompanyApiData = z.infer<typeof companyApiSchema>;
+
+export const mapFormToApi = (formData: CompanySignupData): CompanyApiData => {
+  const cleanCnpj = formData.cnpj.replace(/[.\-/]/g, "");
+  
+  return {
+    fullCompanyName: formData.companyName,
+    fantasyName: formData.companyName,
+    email1: formData.corporateEmail,
+    phone1: formData.whatsapp.replace(/\s/g, ""),
+    address: formData.address,
+    city: formData.city,
+    state: formData.state,
+    country: "Brasil",
+    documentos: [{
+      type: "CNPJ",
+      documentNumber: cleanCnpj,
+      document: "CNPJ",
+      primary: true
+    }],
+    segment: formData.segment,
+    adminPassword: formData.password,
+    aceiteTermos: formData.acceptTerms
+  };
+};

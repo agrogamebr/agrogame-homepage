@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -23,14 +23,18 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { companySignupSchema, type CompanySignupData } from "@/lib/schemas";
+import { companySignupSchema, type CompanySignupData, mapFormToApi } from "@/lib/schemas";
+import { BRAZILIAN_STATES } from "@/lib/constants";
+import { useCities } from "@/lib/services/ibge";
 
 interface CompanySignupFormProps {
-  onSubmit: (data: CompanySignupData) => void;
+  onSubmit: (data: CompanySignupData) => Promise<void> | void;
 }
 
 export default function CompanySignupForm({ onSubmit }: CompanySignupFormProps) {
   const [showPassword, setShowPassword] = useState(false);
+  const [selectedState, setSelectedState] = useState<string>("");
+  const { cities, loading, error, loadCities, clearCities } = useCities();
 
   const form = useForm<CompanySignupData>({
     resolver: zodResolver(companySignupSchema),
@@ -49,10 +53,36 @@ export default function CompanySignupForm({ onSubmit }: CompanySignupFormProps) 
     },
   });
 
-  const handleSubmit = (data: CompanySignupData) => {
-    console.log("Company signup data:", data);
-    onSubmit(data);
+  const handleStateChange = (stateCode: string) => {
+    setSelectedState(stateCode);
+    form.setValue("state", stateCode);
+    form.setValue("city", "");
+    
+    if (stateCode) {
+      loadCities(stateCode);
+    } else {
+      clearCities();
+    }
   };
+
+  const handleSubmit: SubmitHandler<CompanySignupData> = async (data) => {
+    console.log("📋 Company signup data:", data);
+    console.log("🔄 Dados após mapeamento para API:", mapFormToApi(data));
+    console.log("❌ Form errors:", form.formState.errors);
+    console.log("✅ Form valid:", form.formState.isValid);
+    
+    try {
+      await onSubmit(data);
+    } catch (error) {
+      console.error("❌ Erro no handleSubmit:", error);
+    }
+  };
+
+  console.log("🔍 Form state:", {
+    isSubmitting: form.formState.isSubmitting,
+    isValid: form.formState.isValid,
+    errors: form.formState.errors
+  });
 
   const formatCNPJ = (value: string) => {
     const numbers = value.replace(/\D/g, "");
@@ -81,7 +111,11 @@ export default function CompanySignupForm({ onSubmit }: CompanySignupFormProps) 
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+        <form 
+          onSubmit={form.handleSubmit(handleSubmit)} 
+          className="space-y-6"
+          onSubmitCapture={() => console.log("🎯 Form submit event captured")}
+        >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormField
               control={form.control}
@@ -154,37 +188,15 @@ export default function CompanySignupForm({ onSubmit }: CompanySignupFormProps) 
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="AC" />
+                        <SelectValue placeholder="Selecione o estado" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="ac">AC</SelectItem>
-                      <SelectItem value="al">AL</SelectItem>
-                      <SelectItem value="ap">AP</SelectItem>
-                      <SelectItem value="am">AM</SelectItem>
-                      <SelectItem value="ba">BA</SelectItem>
-                      <SelectItem value="ce">CE</SelectItem>
-                      <SelectItem value="df">DF</SelectItem>
-                      <SelectItem value="es">ES</SelectItem>
-                      <SelectItem value="go">GO</SelectItem>
-                      <SelectItem value="ma">MA</SelectItem>
-                      <SelectItem value="mt">MT</SelectItem>
-                      <SelectItem value="ms">MS</SelectItem>
-                      <SelectItem value="mg">MG</SelectItem>
-                      <SelectItem value="pa">PA</SelectItem>
-                      <SelectItem value="pb">PB</SelectItem>
-                      <SelectItem value="pr">PR</SelectItem>
-                      <SelectItem value="pe">PE</SelectItem>
-                      <SelectItem value="pi">PI</SelectItem>
-                      <SelectItem value="rj">RJ</SelectItem>
-                      <SelectItem value="rn">RN</SelectItem>
-                      <SelectItem value="rs">RS</SelectItem>
-                      <SelectItem value="ro">RO</SelectItem>
-                      <SelectItem value="rr">RR</SelectItem>
-                      <SelectItem value="sc">SC</SelectItem>
-                      <SelectItem value="sp">SP</SelectItem>
-                      <SelectItem value="se">SE</SelectItem>
-                      <SelectItem value="to">TO</SelectItem>
+                      {BRAZILIAN_STATES.map((state) => (
+                        <SelectItem key={state.value} value={state.value.toLowerCase()}>
+                          {state.label}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -208,6 +220,88 @@ export default function CompanySignupForm({ onSubmit }: CompanySignupFormProps) 
                       }}
                     />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <FormField
+            control={form.control}
+            name="address"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Endereço</FormLabel>
+                <FormControl>
+                  <Input placeholder="Rua, número e complemento" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <FormField
+              control={form.control}
+              name="state"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Estado</FormLabel>
+                  <Select 
+                    onValueChange={handleStateChange} 
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Selecione o estado" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {BRAZILIAN_STATES.map((state) => (
+                        <SelectItem key={state.value} value={state.value}>
+                          {state.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="city"
+              render={({ field }) => (
+                <FormItem className="md:col-span-2">
+                  <FormLabel>Cidade</FormLabel>
+                  <Select 
+                    onValueChange={field.onChange} 
+                    defaultValue={field.value}
+                    disabled={!selectedState || loading}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue 
+                          placeholder={
+                            !selectedState 
+                              ? "Selecione primeiro um estado" 
+                              : loading 
+                              ? "Carregando cidades..." 
+                              : "Selecione a cidade"
+                          } 
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {cities.map((city) => (
+                        <SelectItem key={city.value} value={city.value}>
+                          {city.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {error && <p className="text-sm text-red-500">{error}</p>}
                   <FormMessage />
                 </FormItem>
               )}
@@ -296,8 +390,9 @@ export default function CompanySignupForm({ onSubmit }: CompanySignupFormProps) 
           />
           <Button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-md font-medium"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-md font-medium cursor-pointer"
             disabled={form.formState.isSubmitting}
+            onClick={() => console.log("🔘 Botão submit clicado")}
           >
             {form.formState.isSubmitting ? "Realizando Cadastro..." : "Realizar Cadastro"}
           </Button>

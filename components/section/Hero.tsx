@@ -7,26 +7,21 @@ export default function Hero() {
     <section className="relative min-h-screen bg-white overflow-hidden">
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
         <div className="grid lg:grid-cols-2 gap-12 items-center min-h-screen">
-          {/* Left Content */}
           <div className="lg:pr-8">
-            {/* Badge */}
             <div className="inline-flex items-center bg-orange-100 backdrop-blur-sm rounded-3xl px-4 py-2 text-sm font-medium text-gray-900 mb-8">
               BEM-VINDO AO AGRO GAME
             </div>
 
-            {/* Main heading */}
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
               Transforme o relacionamento em benefícios
             </h1>
 
-            {/* Description */}
             <p className="text-lg text-gray-900 mb-8 max-w-xl">
               Conecte sua empresa a soluções exclusivas, parcerias estratégicas e vantagens 
               que aceleram o crescimento no campo. Com o Agrogame, engajamento vira 
               resultado.
             </p>
 
-            {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 mb-8">
               <Link
                 href="#cadastro"
@@ -43,7 +38,6 @@ export default function Hero() {
               </Link>
             </div>
 
-            {/* Stats or additional info */}
             <div className="flex items-center space-x-6 text-sm text-gray-500">
               <div className="flex items-center">
                 <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
@@ -52,10 +46,8 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Right Content - Image */}
           <div className="relative lg:pl-8">
             <div className="relative">
-              {/* Main farmer image - Centro */}
               <div className="relative">
                 <Image
                   src="/assets/svgs/farmer.svg"
@@ -67,9 +59,6 @@ export default function Hero() {
                 />
               </div>
 
-              {/* Floating cards/elements around the image */}
-              
-              {/* Alerts - Top Left */}
               <div className="absolute -top-6 -left-6 rounded-lg p-3">
                 <div className="flex items-center space-x-2">
                   <Image
@@ -82,7 +71,6 @@ export default function Hero() {
                 </div>
               </div>
 
-              {/* Calendar - Top Right */}
               <div className="absolute -top-6 -right-6 bg-white rounded-lg shadow-lg p-3 border border-gray-100">
                 <div className="flex items-center space-x-2">
                   <Image
@@ -96,7 +84,6 @@ export default function Hero() {
                 </div>
               </div>
 
-              {/* Shield - Middle Right */}
               <div className="absolute top-1/2 -translate-y-1/2 -right-8 bg-white rounded-lg shadow-lg p-3 border border-gray-100">
                 <div className="flex items-center justify-center">
                   <Image
@@ -109,7 +96,6 @@ export default function Hero() {
                 </div>
               </div>
 
-              {/* Stats Card - Bottom Right */}
               <div className="absolute -bottom-6 -right-6 bg-white rounded-lg shadow-lg p-4 border border-gray-100">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-green-600">142×142</div>
@@ -117,7 +103,6 @@ export default function Hero() {
                 </div>
               </div>
 
-              {/* Charts/Analytics - Bottom Left */}
               <div className="absolute -bottom-6 -left-6 bg-white rounded-lg shadow-lg p-3 border border-gray-100">
                 <div className="flex items-center space-x-2">
                   <Image
@@ -131,7 +116,6 @@ export default function Hero() {
                 </div>
               </div>
 
-              {/* Status Indicator - Top Center */}
               <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-white rounded-full shadow-lg px-3 py-1 border border-gray-100">
                 <div className="flex items-center space-x-2">
                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
