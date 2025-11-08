@@ -29,7 +29,7 @@ export default function FeatureCard({
   const iconSizeMap = {
     sm: { width: 32, height: 32, className: "w-8 h-8" },
     md: { width: 48, height: 48, className: "w-12 h-12" },
-    lg: { width: 80, height: 80, className: "w-20 h-20" },
+    lg: { width: 76, height: 76, className: "w-[76px] h-[76px]" },
     xl: { width: 148, height: 148, className: "w-20 h-20 sm:w-[100px] sm:h-[100px] md:w-[120px] md:h-[120px] lg:w-[148px] lg:h-[148px]" },
   };
 
