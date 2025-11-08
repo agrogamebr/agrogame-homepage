@@ -11,6 +11,7 @@ interface FeatureCardProps {
   onClick?: () => void;
   iconSize?: 'sm' | 'md' | 'lg' | 'xl';
   padding?: string;
+  layout?: 'vertical' | 'horizontal';
 }
 
 export default function FeatureCard({
@@ -23,6 +24,7 @@ export default function FeatureCard({
   onClick,
   iconSize = 'md',
   padding = "p-6",
+  layout = 'vertical',
 }: FeatureCardProps) {
   const iconSizeMap = {
     sm: { width: 32, height: 32, className: "w-8 h-8" },
@@ -36,7 +38,8 @@ export default function FeatureCard({
   return (
     <div
       className={`
-        ${padding} rounded-3xl shadow-sm hover:shadow-md transition-all duration-200 flex flex-col
+        ${padding} rounded-3xl shadow-sm hover:shadow-md transition-all duration-200
+        ${layout === 'horizontal' ? 'flex flex-row items-center gap-4' : 'flex flex-col'}
         ${backgroundColor}
         ${onClick ? "cursor-pointer hover:scale-105" : ""}
         ${className}
@@ -44,7 +47,7 @@ export default function FeatureCard({
       onClick={onClick}
     >
       {icon && (
-        <div className="mb-4 sm:mb-6 shrink-0">
+        <div className={layout === 'horizontal' ? "shrink-0 flex items-center justify-center" : "mb-4 sm:mb-6 shrink-0"}>
           <Image
             src={icon}
             alt={title}
@@ -56,11 +59,11 @@ export default function FeatureCard({
       )}
       
       <div className="flex flex-col flex-1">
-        <h3 className="text-lg sm:text-xl font-semibold text-blue-950 mb-3 sm:mb-4 shrink-0">
+        <h3 className={`font-semibold text-blue-950 shrink-0 ${layout === 'horizontal' ? 'text-base sm:text-lg mb-2' : 'text-lg sm:text-xl mb-3 sm:mb-4'}`}>
           {title}
         </h3>
         
-        <p className="text-blue-950 text-xs sm:text-sm leading-relaxed flex-1 mb-4 sm:mb-6">
+        <p className={`text-blue-950 leading-relaxed flex-1 ${layout === 'horizontal' ? 'text-xs sm:text-sm mb-2' : 'text-xs sm:text-sm mb-4 sm:mb-6'}`}>
           {description}
         </p>
         

@@ -74,7 +74,7 @@ export default function ForCompanies() {
                   description={benefit.description}
                   icon={benefit.icon}
                   backgroundColor={benefit.bgColor}
-                  iconSize="md"
+                  iconSize="sm"
                   className={`w-full sm:w-[312px] h-[280px] ${benefit.id === 3 ? 'mb-12' : ''}`}
                 />
               ))}
@@ -88,7 +88,7 @@ export default function ForCompanies() {
                   description={benefit.description}
                   icon={benefit.icon}
                   backgroundColor={benefit.bgColor}
-                  iconSize="md"
+                  iconSize="sm"
                   className="w-full sm:w-[312px] h-[280px]"
                 />
               ))}
