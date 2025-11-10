@@ -4,6 +4,7 @@ import HowItWorks from "@/components/section/HowItWorks";
 import ForCompanies from "@/components/section/ForCompanies";
 import ForProducers from "@/components/section/ForProducers";
 import Benefits from "@/components/section/Benefits";
+import DownloadApp from "@/components/section/DownloadApp";
 import SignupSection from "@/components/section/Signup";
 import Footer from "@/components/section/Footer";
 
@@ -16,6 +17,7 @@ export default function Home() {
       <ForCompanies />
       <ForProducers />
       <Benefits />
+      <DownloadApp />
       <SignupSection />
       <Footer />
     </div>
