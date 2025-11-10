@@ -44,6 +44,8 @@ export default function CompanySignupForm({ onSubmit }: CompanySignupFormProps) 
       segment: "",
       activity: "",
       whatsapp: "",
+      responsibleName: "",
+      responsiblePhone: "",
       address: "",
       state: "",
       city: "",
@@ -96,10 +98,26 @@ export default function CompanySignupForm({ onSubmit }: CompanySignupFormProps) 
 
   const formatPhone = (value: string) => {
     const numbers = value.replace(/\D/g, "");
-    return numbers
-      .replace(/(\d{2})(\d)/, "$1 $2")
-      .replace(/(\d{4,5})(\d)/, "$1 $2")
-      .substring(0, 14);
+    
+    if (numbers.length >= 11) {
+      return numbers
+        .replace(/(\d{2})(\d)/, "($1) $2")
+        .replace(/(\d{5})(\d)/, "$1-$2")
+        .substring(0, 15); // (XX) XXXXX-XXXX = 15 caracteres
+    }
+    
+    if (numbers.length >= 6) {
+      return numbers
+        .replace(/(\d{2})(\d)/, "($1) $2")
+        .replace(/(\d{4})(\d)/, "$1-$2")
+        .substring(0, 14); // (XX) XXXX-XXXX = 14 caracteres
+    }
+    
+    if (numbers.length >= 2) {
+      return numbers.replace(/(\d{2})(\d)/, "($1) $2");
+    }
+    
+    return numbers;
   };
 
   return (
@@ -212,7 +230,44 @@ export default function CompanySignupForm({ onSubmit }: CompanySignupFormProps) 
                   <FormLabel>Telefone com WhatsApp</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="34 3241 8940"
+                      placeholder="(34) 99999-9999"
+                      {...field}
+                      onChange={(e) => {
+                        const formatted = formatPhone(e.target.value);
+                        field.onChange(formatted);
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <FormField
+              control={form.control}
+              name="responsibleName"
+              render={({ field }) => (
+                <FormItem className="md:col-span-2">
+                  <FormLabel>Nome do responsável</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Nome completo do responsável" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="responsiblePhone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Telefone do responsável</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="(34) 99999-9999"
                       {...field}
                       onChange={(e) => {
                         const formatted = formatPhone(e.target.value);

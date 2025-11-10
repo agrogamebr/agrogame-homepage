@@ -17,8 +17,16 @@ export const companySignupSchema = z.object({
     .min(1, "Selecione um ramo de atividade"),
   whatsapp: z
     .string()
-    .min(11, "Telefone deve ter pelo menos 11 dígitos")
-    .regex(/^\d{2} \d{4,5} \d{4}$/, "Telefone deve estar no formato XX XXXXX XXXX"),
+    .min(14, "Telefone deve ter pelo menos 14 caracteres")
+    .regex(/^\(\d{2}\) \d{4,5}-\d{4}$/, "Telefone deve estar no formato (XX) XXXXX-XXXX"),
+  responsibleName: z
+    .string()
+    .min(2, "Nome do responsável deve ter pelo menos 2 caracteres")
+    .max(100, "Nome do responsável deve ter no máximo 100 caracteres"),
+  responsiblePhone: z
+    .string()
+    .min(14, "Telefone do responsável deve ter pelo menos 14 caracteres")
+    .regex(/^\(\d{2}\) \d{4,5}-\d{4}$/, "Telefone do responsável deve estar no formato (XX) XXXXX-XXXX"),
   address: z
     .string()
     .min(10, "Endereço deve ter pelo menos 10 caracteres")
@@ -50,22 +58,29 @@ export const companyApiSchema = z.object({
   fantasyName: z.string().optional(),
   email1: z.string().email(),
   email2: z.string().email().optional(),
-  phone1: z.string(),
-  phone2: z.string().optional(),
+  phone1: z
+    .string()
+    .regex(/^\(\d{2}\) \d{4,5}-\d{4}$/, "Telefone 1 deve estar no formato (XX) XXXXX-XXXX"),
+  phone2: z
+    .string()
+    .regex(/^\(\d{2}\) \d{4,5}-\d{4}$/, "Telefone 2 deve estar no formato (XX) XXXXX-XXXX")
+    .optional(),
   address: z.string(),
   city: z.string(),
   state: z.string(),
   country: z.string().default("Brasil"),
-  responsibleName: z.string().optional(),
-  responsiblePhone: z.string().optional(),
+  responsibleName: z.string(),
+  responsiblePhone: z
+    .string()
+    .regex(/^\(\d{2}\) \d{4,5}-\d{4}$/, "Telefone do responsável deve estar no formato (XX) XXXXX-XXXX"),
   documentos: z.array(z.object({
     type: z.string(),
     documentNumber: z.string(),
     document: z.string(),
     primary: z.boolean()
   })),
-  segment: z.string(),
-  companyTypeId: z.number().optional(),
+  //segment: z.string(),
+  companyTypeId: z.number().default(1),
   segmentoId: z.number().optional(),
   adminPassword: z.string(),
   aceiteTermos: z.boolean()
@@ -74,25 +89,54 @@ export const companyApiSchema = z.object({
 export type CompanySignupData = z.infer<typeof companySignupSchema>;
 export type CompanyApiData = z.infer<typeof companyApiSchema>;
 
+export const formatPhoneNumber = (phone: string): string => {
+  const cleanPhone = phone.replace(/\D/g, '');
+  
+  if (cleanPhone.length === 11) {
+    return `(${cleanPhone.slice(0, 2)}) ${cleanPhone.slice(2, 7)}-${cleanPhone.slice(7)}`;
+  }
+  
+  if (cleanPhone.length === 10) {
+    return `(${cleanPhone.slice(0, 2)}) ${cleanPhone.slice(2, 6)}-${cleanPhone.slice(6)}`;
+  }
+
+  return phone;
+};
+
+export const validatePhoneFormat = (phone: string): boolean => {
+  return /^\(\d{2}\) \d{4,5}-\d{4}$/.test(phone);
+};
+
 export const mapFormToApi = (formData: CompanySignupData): CompanyApiData => {
   const cleanCnpj = formData.cnpj.replace(/[.\-/]/g, "");
+
+  const formattedPhone = validatePhoneFormat(formData.whatsapp) 
+    ? formData.whatsapp 
+    : formatPhoneNumber(formData.whatsapp);
+
+  const formattedResponsiblePhone = validatePhoneFormat(formData.responsiblePhone) 
+    ? formData.responsiblePhone 
+    : formatPhoneNumber(formData.responsiblePhone);
   
   return {
     fullCompanyName: formData.companyName,
     fantasyName: formData.companyName,
     email1: formData.corporateEmail,
-    phone1: formData.whatsapp.replace(/\s/g, ""),
+    phone1: formattedPhone,
     address: formData.address,
     city: formData.city,
     state: formData.state,
     country: "Brasil",
+    responsibleName: formData.responsibleName,
+    responsiblePhone: formattedResponsiblePhone,
     documentos: [{
       type: "CNPJ",
       documentNumber: cleanCnpj,
       document: "CNPJ",
       primary: true
     }],
-    segment: formData.segment,
+    companyTypeId: 1,
+    //segment: formData.segment,
     adminPassword: formData.password,
     aceiteTermos: formData.acceptTerms
   };
