@@ -1,0 +1,59 @@
+image: google/cloud-sdk:slim
+
+pipelines:
+  branches:
+    develop:
+      - step:
+          name: Build and Deploy to Cloud Run (Dev)
+          trigger: automatic
+          script:
+            # 🔐 Autenticação GCP
+            - echo $GCP_KEYFILE_BASE64 | base64 --decode > gcp-key.json
+            - gcloud auth activate-service-account --key-file=gcp-key.json
+            - gcloud config set project $GCP_PROJECT
+            - gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
+            
+            # 🚀 Submit build ao Cloud Build
+            - |
+              gcloud builds submit \
+                --config=cloudbuild.yaml \
+                --substitutions=_ARTIFACT_REGISTRY_REPO=$ARTIFACT_REGISTRY_REPO,_IMAGE_NAME=$IMAGE_NAME \
+                --async \
+                --format='value(id)' > build_id.txt
+            
+            - export BUILD_ID=$(cat build_id.txt)
+            - echo "Build ID:" $BUILD_ID
+            
+            # ⏳ Aguardando build finalizar
+            - |
+              echo "Aguardando build finalizar..."
+              while true; do
+                STATUS=$(gcloud builds describe $BUILD_ID --format='value(status)')
+                echo "Status atual: $STATUS"
+                if [ "$STATUS" = "SUCCESS" ]; then
+                  echo "✅ Build concluído com sucesso!"
+                  break
+                elif [ "$STATUS" = "FAILURE" ] || [ "$STATUS" = "TIMEOUT" ] || [ "$STATUS" = "CANCELLED" ]; then
+                  echo "❌ Build falhou com status: $STATUS"
+                  gcloud builds log $BUILD_ID --project $GCP_PROJECT
+                  exit 1
+                fi
+                sleep 10
+              done
+            
+            # 🎯 Deploy no Cloud Run
+            - |
+              gcloud run deploy $CLOUD_RUN_SERVICE \
+                --image $ARTIFACT_REGISTRY_REPO/$IMAGE_NAME:$BITBUCKET_COMMIT \
+                --region $CLOUD_RUN_REGION \
+                --platform managed \
+                --service-account $CLOUD_RUN_SERVICE_ACCOUNT \
+                --update-env-vars NEXT_PUBLIC_ENV=dev,APP_ENV=dev \
+                --allow-unauthenticated \
+                --quiet
+            
+            - echo "✨ Deploy finalizado!"
+            
+          after-script:
+            - echo "Pipeline completed with exit code:" $BITBUCKET_EXIT_CODE
+            - rm -f gcp-key.json
