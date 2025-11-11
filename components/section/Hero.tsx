@@ -1,6 +1,8 @@
-import Link from "next/link";
+"use client";
+
 import Image from "next/image";
 import { FaPlay } from "react-icons/fa";
+import { Button } from "@/components/ui/button";
 
 export default function Hero() {
   return (
@@ -23,27 +25,27 @@ export default function Hero() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 mb-8">
-              <Link
-                href="#cadastro"
-                className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors duration-200 inline-flex items-center justify-center gap-2 min-w-fit"
+              <Button
+                onClick={() => document.getElementById('cadastro')?.scrollIntoView({ behavior: 'smooth' })}
+                className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors duration-200 inline-flex items-center justify-center gap-2 min-w-fit h-auto cursor-pointer"
               >
                 Cadastrar Minha Empresa
-              </Link>
+              </Button>
               
-              <Link
-                href="#produtor"
-                className="bg-blue-50 text-blue-600 px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-600 hover:text-white transition-colors duration-200 inline-flex items-center justify-center gap-2 min-w-fit"
+              <Button
+                onClick={() => document.getElementById('produtor')?.scrollIntoView({ behavior: 'smooth' })}
+                className="bg-blue-50 text-blue-600 px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-600 hover:text-white transition-colors duration-200 inline-flex items-center justify-center gap-2 min-w-fit h-auto cursor-pointer"
               >
                 <FaPlay className="w-3 h-3" /> Sou Produtor Rural
-              </Link>
+              </Button>
             </div>
 
-            <div className="flex items-center space-x-6 text-sm text-gray-500">
+            {/* <div className="flex items-center space-x-6 text-sm text-gray-500">
               <div className="flex items-center">
                 <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
                 <span>Mais de 1000 empresas cadastradas</span>
               </div>
-            </div>
+            </div> */}
           </div>
 
           <div className="relative lg:pl-8">

@@ -399,7 +399,7 @@ export default function CompanySignupForm({ onSubmit }: CompanySignupFormProps) 
                         type="button"
                         variant="ghost"
                         size="icon-sm"
-                        className="absolute right-2 top-1/2 transform -translate-y-1/2 h-7 w-7"
+                        className="absolute right-2 top-1/2 transform -translate-y-1/2 h-7 w-7 cursor-pointer"
                         onClick={() => setShowPassword(!showPassword)}
                       >
                         {showPassword ? (

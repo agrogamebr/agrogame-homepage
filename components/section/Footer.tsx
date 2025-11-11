@@ -78,7 +78,7 @@ export default function Footer() {
           </div>
 
           <div className="sm:col-span-1 md:col-span-1 lg:col-span-1 xl:col-span-1">
-            <h3 className="text-white font-semibold text-sm uppercase tracking-wider mb-4">
+            {/* <h3 className="text-white font-semibold text-sm uppercase tracking-wider mb-4">
               SUPORTE
             </h3>
             <ul className="space-y-3">
@@ -92,11 +92,11 @@ export default function Footer() {
                   </Link>
                 </li>
               ))}
-            </ul>
+            </ul> */}
           </div>
 
           <div className="sm:col-span-2 md:col-span-1 lg:col-span-1 xl:col-span-1">
-            <h3 className="text-white font-semibold text-sm uppercase tracking-wider mb-4">
+            {/* <h3 className="text-white font-semibold text-sm uppercase tracking-wider mb-4">
               BAIXE O APP
             </h3>
             <ul className="space-y-3">
@@ -110,7 +110,7 @@ export default function Footer() {
                   </Link>
                 </li>
               ))}
-            </ul>
+            </ul> */}
           </div>
 
           <div className="sm:col-span-2 md:col-span-1 lg:col-span-1 xl:col-span-1 flex justify-start md:justify-center lg:justify-end">

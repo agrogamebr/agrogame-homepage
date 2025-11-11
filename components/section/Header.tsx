@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -50,29 +51,29 @@ export default function Header() {
           </div>
 
           <div className="hidden lg:flex items-center space-x-2 shrink-0">
-            <Link
-              href="#signup"
-              className="bg-blue-600 text-white px-2 xl:px-4 py-2 rounded-md text-xs xl:text-sm font-medium hover:bg-blue-700 transition-colors duration-200 whitespace-nowrap leading-tight"
+            <Button
+              onClick={() => document.getElementById('signup')?.scrollIntoView({ behavior: 'smooth' })}
+              className="bg-blue-600 text-white px-2 xl:px-4 py-2 rounded-md text-xs xl:text-sm font-medium hover:bg-blue-700 transition-colors duration-200 whitespace-nowrap leading-tight h-auto cursor-pointer"
               title="Quero Fazer Parte Do Agro Game"
             >
               <span className="xl:hidden">Fazer Parte</span>
               <span className="hidden xl:inline">Quero Fazer Parte Do Agro Game</span>
-            </Link>
-            <Link
+            </Button>
+            {/* <Link
               href="#login"
               className="bg-transparent text-blue-600 px-2 xl:px-4 py-2 rounded-md text-xs xl:text-sm border border-blue-600 font-medium hover:bg-blue-600 hover:text-white transition-colors duration-200 whitespace-nowrap leading-tight"
             >
               Login
-            </Link>
+            </Link> */}
           </div>
 
           <div className="hidden md:block lg:hidden">
-            <Link
-              href="#signup"
-              className="bg-blue-600 text-white px-3 py-2 rounded-sm text-xs font-medium hover:bg-blue-700 transition-colors duration-200"
+            <Button
+              onClick={() => document.getElementById('signup')?.scrollIntoView({ behavior: 'smooth' })}
+              className="bg-blue-600 text-white px-3 py-2 rounded-sm text-xs font-medium hover:bg-blue-700 transition-colors duration-200 h-auto cursor-pointer"
             >
               Fazer Parte
-            </Link>
+            </Button>
           </div>
 
           <div className="md:hidden">
@@ -103,20 +104,22 @@ export default function Header() {
                 </Link>
               ))}
               <div className="pt-4 space-y-2">
-                <Link
-                  href="#signup"
-                  className="block w-full text-center bg-blue-600 text-white px-3 py-2 rounded-lg text-base font-medium hover:bg-blue-700 transition-colors duration-200"
-                  onClick={() => setIsMenuOpen(false)}
+                <Button
+                  onClick={() => {
+                    document.getElementById('signup')?.scrollIntoView({ behavior: 'smooth' });
+                    setIsMenuOpen(false);
+                  }}
+                  className="block w-full text-center bg-blue-600 text-white px-3 py-2 rounded-lg text-base font-medium hover:bg-blue-700 transition-colors duration-200 h-auto cursor-pointer"
                 >
                   Fazer Parte
-                </Link>
-                <Link
+                </Button>
+                {/* <Link
                   href="#login"
                   className="block w-full text-center bg-transparent text-blue-600 px-3 py-2 rounded-lg text-base border border-blue-600 font-medium hover:bg-blue-600 hover:text-white transition-colors duration-200"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Login
-                </Link>
+                </Link> */}
               </div>
             </div>
           </div>

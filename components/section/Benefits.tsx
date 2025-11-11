@@ -1,5 +1,7 @@
-import Link from "next/link";
+"use client";
+
 import FeatureCard from "@/components/common/feature-card";
+import { Button } from "@/components/ui/button";
 
 export default function Benefits() {
   const benefits = [
@@ -76,19 +78,19 @@ export default function Benefits() {
               Por que o Agrogame é diferente de tudo que você já viu no <br />agro
             </p>
 
-            <Link
-              href="#cadastro-empresa"
+            <Button
+              onClick={() => document.getElementById('cadastro-empresa')?.scrollIntoView({ behavior: 'smooth' })}
               className="inline-flex items-center bg-blue-600 text-white 
                         px-8 py-3 rounded-lg gap-3
                         font-semibold hover:bg-blue-700 transition-colors duration-200
                         text-sm lg:text-base
-                        w-fit"
+                        w-fit h-auto cursor-pointer"
             >
               Quero Fazer Parte Do Ecossistema Agrogame
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
-            </Link>
+            </Button>
           </div>
         </div>
       </div>

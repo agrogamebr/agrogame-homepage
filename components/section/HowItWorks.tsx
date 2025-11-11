@@ -98,15 +98,6 @@ export default function HowItWorks() {
               padding="p-4 sm:p-6 md:p-8"
               className="h-full"
             >
-              <Link
-                href={`#step-${step.id}`}
-                className="inline-flex items-center bg-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-md text-blue-600 font-medium text-xs sm:text-sm hover:text-blue-700 transition-colors"
-              >
-                Learn More
-                <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </Link>
             </FeatureCard>
           ))}
         </div>

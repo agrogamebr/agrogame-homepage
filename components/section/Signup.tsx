@@ -7,6 +7,7 @@ import { CompanySignupData } from "@/lib/schemas";
 import { ProducerSignupData } from "@/lib/schemas-producer";
 import { useCreateCompany } from "@/lib/api/company";
 import { useToast } from "@/components/ui/toast";
+import { Button } from "@/components/ui/button";
 
 export default function SignupSection() {
   const [selectedType, setSelectedType] = useState<boolean>(false); // false = empresa, true = produtor
@@ -83,12 +84,12 @@ export default function SignupSection() {
                   <p className="text-gray-600">
                     Formulário de produtor em desenvolvimento...
                   </p>
-                  <button 
+                  <Button 
                     onClick={() => handleProducerSignup({} as ProducerSignupData)}
-                    className="mt-4 px-4 py-2 bg-blue-600 text-white rounded"
+                    className="mt-4 px-4 py-2 bg-blue-600 text-white rounded cursor-pointer hover:bg-blue-700 transition-colors duration-200 cursor-pointer"
                   >
                     Teste Cadastro Produtor
-                  </button>
+                  </Button>
                 </div>
               )}
             </div>

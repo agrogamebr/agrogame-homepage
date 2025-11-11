@@ -17,7 +17,7 @@ export default function Home() {
       <ForCompanies />
       <ForProducers />
       <Benefits />
-      <DownloadApp />
+      {/* <DownloadApp /> */}
       <SignupSection />
       <Footer />
     </div>
