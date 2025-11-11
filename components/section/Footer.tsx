@@ -44,7 +44,7 @@ export default function Footer() {
             <div className="flex items-center mb-6">
               <Link href="/" className="flex items-center rounded-xl overflow-hidden">
                 <Image
-                  src="/assets/svgs/whiteLogo.svg"
+                  src="/whiteLogo.svg"
                   alt="AgroGame Logo"
                   width={252}
                   height={49}

@@ -25,7 +25,7 @@ export default function Header() {
             <Link href="/" className="flex items-center">
               <span>
                 <Image
-                  src="/assets/svgs/logo.svg"
+                  src="/logo.svg"
                   alt="AgroGame Logo"
                   width={140}
                   height={38}
