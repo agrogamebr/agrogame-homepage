@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { FaPlay } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
+import { scrollToSignup } from "@/lib/utils/navigation";
 
 export default function Hero() {
   return (
@@ -26,14 +27,14 @@ export default function Hero() {
 
             <div className="flex flex-col sm:flex-row gap-4 mb-8">
               <Button
-                onClick={() => document.getElementById('cadastro')?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={() => scrollToSignup('company')}
                 className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors duration-200 inline-flex items-center justify-center gap-2 min-w-fit h-auto cursor-pointer"
               >
                 Cadastrar Minha Empresa
               </Button>
               
               <Button
-                onClick={() => document.getElementById('produtor')?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={() => scrollToSignup('producer')}
                 className="bg-blue-50 text-blue-600 px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-600 hover:text-white transition-colors duration-200 inline-flex items-center justify-center gap-2 min-w-fit h-auto cursor-pointer"
               >
                 <FaPlay className="w-3 h-3" /> Sou Produtor Rural

@@ -56,3 +56,21 @@ export const scrollToElement = (
     });
   }
 };
+
+/**
+ * Scroll suave para signup e define o tipo de formulário
+ * @param signupType - Tipo de cadastro: 'company' ou 'producer'
+ * @param headerOffset - Altura do header fixo em pixels (padrão: 64px)
+ */
+export const scrollToSignup = (
+  signupType: 'company' | 'producer',
+  headerOffset: number = 64
+): void => {
+  window.dispatchEvent(
+    new CustomEvent('setSignupType', { detail: { type: signupType } })
+  );
+
+  setTimeout(() => {
+    scrollToElement('signup', headerOffset);
+  }, 50);
+};

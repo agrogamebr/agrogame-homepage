@@ -1,19 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SignupType } from "@/components/common/signuptype";
 import CompanySignupForm from "@/components/forms/CompanySignupForm";
 import { CompanySignupData } from "@/lib/schemas";
 import { ProducerSignupData } from "@/lib/schemas-producer";
 import { useCreateCompany } from "@/lib/api/company";
 import { useToast } from "@/components/ui/toast";
-import { Button } from "@/components/ui/button";
+
+import ProducerSignupForm from "../forms/ProducerSignupForm";
 
 export default function SignupSection() {
   const [selectedType, setSelectedType] = useState<boolean>(false); // false = empresa, true = produtor
 
   const { showToast, ToastContainer } = useToast();
   const createCompanyMutation = useCreateCompany();
+
+  useEffect(() => {
+    const handleSetSignupType = (event: CustomEvent<{ type: 'company' | 'producer' }>) => {
+      const isProducer = event.detail.type === 'producer';
+      setSelectedType(isProducer);
+    };
+
+    window.addEventListener('setSignupType', handleSetSignupType as EventListener);
+
+    return () => {
+      window.removeEventListener('setSignupType', handleSetSignupType as EventListener);
+    };
+  }, []);
 
   const handleCompanySignup = async (data: CompanySignupData) => {
     try {
@@ -80,17 +94,7 @@ export default function SignupSection() {
               {!selectedType ? (
                 <CompanySignupForm onSubmit={handleCompanySignup} />
               ) : (
-                <div className="text-center p-8">
-                  <p className="text-gray-600">
-                    Formulário de produtor em desenvolvimento...
-                  </p>
-                  <Button 
-                    onClick={() => handleProducerSignup({} as ProducerSignupData)}
-                    className="mt-4 px-4 py-2 bg-blue-600 text-white rounded cursor-pointer hover:bg-blue-700 transition-colors duration-200 cursor-pointer"
-                  >
-                    Teste Cadastro Produtor
-                  </Button>
-                </div>
+                <ProducerSignupForm onSubmit={handleProducerSignup} />
               )}
             </div>
           </div>

@@ -2,6 +2,7 @@
 
 import FeatureCard from "@/components/common/feature-card";
 import { Button } from "@/components/ui/button";
+import { scrollToElement } from "@/lib/utils/navigation";
 
 export default function Benefits() {
   const benefits = [
@@ -79,7 +80,9 @@ export default function Benefits() {
             </p>
 
             <Button
-              onClick={() => document.getElementById('cadastro-empresa')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => {
+                scrollToElement('signup');
+              }}
               className="inline-flex items-center bg-blue-600 text-white 
                         px-8 py-3 rounded-lg gap-3
                         font-semibold hover:bg-blue-700 transition-colors duration-200
