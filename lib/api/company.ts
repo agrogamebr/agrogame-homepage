@@ -1,6 +1,11 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { api, handleApiError } from "@/lib/api";
 import { CompanySignupData, mapFormToApi } from "@/lib/schemas";
+
+export interface CompanyType {
+  id: string;
+  name: string;
+}
 
 interface CompanyCreateResponse {
   success: boolean;
@@ -57,5 +62,22 @@ export const useCreateCompany = () => {
     onError: (error) => {
       console.error("❌ Erro ao cadastrar empresa:", error);
     },
+  });
+};
+
+export const fetchCompanyTypes = async (): Promise<CompanyType[]> => {
+  try {
+    const response = await api.get("api/company/company-types").json<CompanyType[]>();
+    return response;
+  } catch (error) {
+    throw handleApiError(error);
+  }
+};
+
+export const useCompanyTypes = () => {
+  return useQuery({
+    queryKey: ["company-types"],
+    queryFn: fetchCompanyTypes,
+    staleTime: 1000 * 60 * 60,
   });
 };
