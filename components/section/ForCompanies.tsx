@@ -7,28 +7,28 @@ export default function ForCompanies() {
   const benefits = [
     {
       id: 1,
-      icon: "/assets/svgs/penNibStraight.svg",
+      icon: "/assets/svgs/costReduction.svg",
       title: "Redução de custos operacionais:",
       description: "Acesse descontos corporativos em insumos agrícolas, maquinário, seguros e serviços especializados através da rede de parceiros Agrogame.",
       bgColor: "bg-blue-50"
     },
     {
       id: 2,
-      icon: "/assets/svgs/database.svg", 
+      icon: "/assets/svgs/relationship.svg", 
       title: "Fortalecimento do relacionamento:",
       description: "Ofereça benefícios exclusivos aos produtores rurais vinculados à sua empresa, aumentando fidelização e engajamento contínuo.",
       bgColor: "bg-fuchsia-50"
     },
     {
       id: 3,
-      icon: "/assets/svgs/bug.svg",
+      icon: "/assets/svgs/dataInsight.svg",
       title: "Dados e insights estratégicos:",
       description: "Monitore o uso de benefícios, identifique padrões de comportamento e tome decisões baseadas em dados reais do campo.",
       bgColor: "bg-gray-100"
     },
     {
       id: 4,
-      icon: "/assets/svgs/package.svg",
+      icon: "/assets/svgs/sustainableGrowth.svg",
       title: "Crescimento sustentável:",
       description: "Construa um ecossistema de relacionamento que transforma produtores em parceiros de longo prazo, gerando valor compartilhado.",
       bgColor: "bg-emerald-50"
