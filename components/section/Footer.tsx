@@ -1,16 +1,19 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { SiFacebook, SiLinkedin, SiX, SiInstagram } from "react-icons/si";
+import { handleNavClick } from "@/lib/utils/navigation";
 
 export default function Footer() {
   const footerSections = {
     soluções: [
-      { name: "Para Empresas", href: "#empresas" },
-      { name: "Para Produtores Rurais", href: "#produtores" },
-      { name: "Benefícios e Diferenciais", href: "#beneficios" },
-      { name: "Como Funciona", href: "#como-funciona" },
-      { name: "Rede de Parceiros", href: "#parceiros" },
-      { name: "Seja um Parceiro", href: "#seja-parceiro" }
+      { name: "Para Empresas", href: "#companies" },
+      { name: "Para Produtores Rurais", href: "#producers" },
+      { name: "Benefícios e Diferenciais", href: "#benefits" },
+      { name: "Como Funciona", href: "#howitworks" },
+      // { name: "Rede de Parceiros", href: "#parceiros" },
+      // { name: "Seja um Parceiro", href: "#seja-parceiro" }
     ],
     suporte: [
       { name: "Central de Ajuda", href: "#ajuda" },
@@ -68,6 +71,7 @@ export default function Footer() {
                 <li key={item.name}>
                   <Link
                     href={item.href}
+                    onClick={(e) => handleNavClick(e, item.href)}
                     className="text-gray-300 text-sm hover:text-white transition-colors duration-200"
                   >
                     {item.name}

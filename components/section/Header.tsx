@@ -5,17 +5,23 @@ import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { handleNavClick, scrollToElement } from "@/lib/utils/navigation";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navigation = [
     { name: "Home", href: "#home" },
-    { name: "Como funciona", href: "#about" },
+    { name: "Como funciona", href: "#howitworks" },
     { name: "Para empresas", href: "#companies" },
     { name: "Para produtores", href: "#producers" },
     { name: "Benefícios e Diferencias", href: "#benefits" },
   ];
+
+  const onNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    handleNavClick(e, href);
+    setIsMenuOpen(false);
+  };
 
   return (
     <header className="fixed top-0 w-full bg-white/90 backdrop-blur-sm border-b border-gray-200 z-50">
@@ -42,6 +48,7 @@ export default function Header() {
                 <Link
                   key={item.name}
                   href={item.href}
+                  onClick={(e) => onNavClick(e, item.href)}
                   className="px-2 xl:px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors duration-200 whitespace-nowrap"
                 >
                   {item.name}
@@ -52,7 +59,7 @@ export default function Header() {
 
           <div className="hidden lg:flex items-center space-x-2 shrink-0">
             <Button
-              onClick={() => document.getElementById('signup')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => scrollToElement('signup')}
               className="bg-blue-600 text-white px-2 xl:px-4 py-2 rounded-md text-xs xl:text-sm font-medium hover:bg-blue-700 transition-colors duration-200 whitespace-nowrap leading-tight h-auto cursor-pointer"
               title="Quero Fazer Parte Do Agro Game"
             >
@@ -69,7 +76,7 @@ export default function Header() {
 
           <div className="hidden md:block lg:hidden">
             <Button
-              onClick={() => document.getElementById('signup')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => scrollToElement('signup')}
               className="bg-blue-600 text-white px-3 py-2 rounded-sm text-xs font-medium hover:bg-blue-700 transition-colors duration-200 h-auto cursor-pointer"
             >
               Fazer Parte
@@ -97,8 +104,8 @@ export default function Header() {
                 <Link
                   key={item.name}
                   href={item.href}
+                  onClick={(e) => onNavClick(e, item.href)}
                   className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md"
-                  onClick={() => setIsMenuOpen(false)}
                 >
                   {item.name}
                 </Link>
@@ -106,7 +113,7 @@ export default function Header() {
               <div className="pt-4 space-y-2">
                 <Button
                   onClick={() => {
-                    document.getElementById('signup')?.scrollIntoView({ behavior: 'smooth' });
+                    scrollToElement('signup');
                     setIsMenuOpen(false);
                   }}
                   className="block w-full text-center bg-blue-600 text-white px-3 py-2 rounded-lg text-base font-medium hover:bg-blue-700 transition-colors duration-200 h-auto cursor-pointer"

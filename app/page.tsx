@@ -12,13 +12,25 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      <Hero />
-      <HowItWorks />
-      <ForCompanies />
-      <ForProducers />
-      <Benefits />
+      <section id="home">
+        <Hero />
+      </section>
+      <section id="howitworks">
+        <HowItWorks />
+      </section>
+      <section id="companies">
+        <ForCompanies />
+      </section>
+      <section id="producers">
+        <ForProducers />
+      </section>
+      <section id="benefits">
+        <Benefits />
+      </section>
       {/* <DownloadApp /> */}
-      <SignupSection />
+      <section id="signup">
+        <SignupSection />
+      </section>
       <Footer />
     </div>
   );
