@@ -26,7 +26,7 @@ function SignupType({ value, onValueChange, className }: SignupTypeProps) {
       <Switch
         checked={value}
         onCheckedChange={onValueChange}
-        className="data-[state=checked]:bg-white data-[state=unchecked]:bg-white border-blue-600"
+        className="data-[state=checked]:bg-white data-[state=unchecked]:bg-white border-blue-600 cursor-pointer"
       />
       
       <Label 

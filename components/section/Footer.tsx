@@ -1,16 +1,19 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { SiFacebook, SiLinkedin, SiX, SiInstagram } from "react-icons/si";
+import { handleNavClick } from "@/lib/utils/navigation";
 
 export default function Footer() {
   const footerSections = {
     soluções: [
-      { name: "Para Empresas", href: "#empresas" },
-      { name: "Para Produtores Rurais", href: "#produtores" },
-      { name: "Benefícios e Diferenciais", href: "#beneficios" },
-      { name: "Como Funciona", href: "#como-funciona" },
-      { name: "Rede de Parceiros", href: "#parceiros" },
-      { name: "Seja um Parceiro", href: "#seja-parceiro" }
+      { name: "Para Empresas", href: "#companies" },
+      { name: "Para Produtores Rurais", href: "#producers" },
+      { name: "Benefícios e Diferenciais", href: "#benefits" },
+      { name: "Como Funciona", href: "#howitworks" },
+      // { name: "Rede de Parceiros", href: "#parceiros" },
+      // { name: "Seja um Parceiro", href: "#seja-parceiro" }
     ],
     suporte: [
       { name: "Central de Ajuda", href: "#ajuda" },
@@ -44,7 +47,7 @@ export default function Footer() {
             <div className="flex items-center mb-6">
               <Link href="/" className="flex items-center rounded-xl overflow-hidden">
                 <Image
-                  src="/assets/svgs/whiteLogo.svg"
+                  src="/whiteLogo.svg"
                   alt="AgroGame Logo"
                   width={252}
                   height={49}
@@ -68,6 +71,7 @@ export default function Footer() {
                 <li key={item.name}>
                   <Link
                     href={item.href}
+                    onClick={(e) => handleNavClick(e, item.href)}
                     className="text-gray-300 text-sm hover:text-white transition-colors duration-200"
                   >
                     {item.name}
@@ -78,7 +82,7 @@ export default function Footer() {
           </div>
 
           <div className="sm:col-span-1 md:col-span-1 lg:col-span-1 xl:col-span-1">
-            <h3 className="text-white font-semibold text-sm uppercase tracking-wider mb-4">
+            {/* <h3 className="text-white font-semibold text-sm uppercase tracking-wider mb-4">
               SUPORTE
             </h3>
             <ul className="space-y-3">
@@ -92,11 +96,11 @@ export default function Footer() {
                   </Link>
                 </li>
               ))}
-            </ul>
+            </ul> */}
           </div>
 
           <div className="sm:col-span-2 md:col-span-1 lg:col-span-1 xl:col-span-1">
-            <h3 className="text-white font-semibold text-sm uppercase tracking-wider mb-4">
+            {/* <h3 className="text-white font-semibold text-sm uppercase tracking-wider mb-4">
               BAIXE O APP
             </h3>
             <ul className="space-y-3">
@@ -110,7 +114,7 @@ export default function Footer() {
                   </Link>
                 </li>
               ))}
-            </ul>
+            </ul> */}
           </div>
 
           <div className="sm:col-span-2 md:col-span-1 lg:col-span-1 xl:col-span-1 flex justify-start md:justify-center lg:justify-end">

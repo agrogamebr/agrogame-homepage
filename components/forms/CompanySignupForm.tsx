@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, forwardRef, useImperativeHandle } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
@@ -26,15 +26,22 @@ import {
 import { companySignupSchema, type CompanySignupData, mapFormToApi } from "@/lib/schemas";
 import { BRAZILIAN_STATES } from "@/lib/constants";
 import { useCities } from "@/lib/services/ibge";
+import { useCompanyTypes } from "@/lib/api/company";
 
 interface CompanySignupFormProps {
   onSubmit: (data: CompanySignupData) => Promise<void> | void;
 }
 
-export default function CompanySignupForm({ onSubmit }: CompanySignupFormProps) {
+export interface CompanySignupFormRef {
+  reset: () => void;
+}
+
+const CompanySignupForm = forwardRef<CompanySignupFormRef, CompanySignupFormProps>(
+  ({ onSubmit }, ref) => {
   const [showPassword, setShowPassword] = useState(false);
   const [selectedState, setSelectedState] = useState<string>("");
   const { cities, loading, error, loadCities, clearCities } = useCities();
+  const { data: companyTypes, isLoading: isLoadingTypes } = useCompanyTypes();
 
   const form = useForm<CompanySignupData>({
     resolver: zodResolver(companySignupSchema),
@@ -54,6 +61,15 @@ export default function CompanySignupForm({ onSubmit }: CompanySignupFormProps) 
       acceptTerms: false,
     },
   });
+
+  useImperativeHandle(ref, () => ({
+    reset: () => {
+      form.reset();
+      setSelectedState("");
+      clearCities();
+      setShowPassword(false);
+    }
+  }));
 
   const handleStateChange = (stateCode: string) => {
     setSelectedState(stateCode);
@@ -121,7 +137,7 @@ export default function CompanySignupForm({ onSubmit }: CompanySignupFormProps) 
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
+    <div className="w-full max-w-[872px] mx-auto bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
       <div className="text-center mb-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-2">
           Cadastre-se Agora
@@ -177,18 +193,28 @@ export default function CompanySignupForm({ onSubmit }: CompanySignupFormProps) 
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Segmento de atuação</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select 
+                  onValueChange={field.onChange} 
+                  value={field.value}
+                  disabled={isLoadingTypes}
+                >
                   <FormControl>
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Informe o segmento de atuação" />
+                      <SelectValue 
+                        placeholder={
+                          isLoadingTypes 
+                            ? "Carregando segmentos..." 
+                            : "Informe o segmento de atuação"
+                        } 
+                      />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="cooperativa">Cooperativa</SelectItem>
-                    <SelectItem value="insumos">Distribuidor de Insumos</SelectItem>
-                    <SelectItem value="consultoria">Consultoria Agrícola</SelectItem>
-                    <SelectItem value="industria">Indústria</SelectItem>
-                    <SelectItem value="outros">Outros</SelectItem>
+                    {companyTypes?.map((type) => (
+                      <SelectItem key={type.id} value={type.name}>
+                        {type.name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -281,26 +307,26 @@ export default function CompanySignupForm({ onSubmit }: CompanySignupFormProps) 
             />
           </div>
 
-          <FormField
-            control={form.control}
-            name="address"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Endereço</FormLabel>
-                <FormControl>
-                  <Input placeholder="Rua, número e complemento" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="flex flex-col md:flex-row gap-4 w-full">
+            <FormField
+              control={form.control}
+              name="address"
+              render={({ field }) => (
+                <FormItem className="w-full md:flex-2 shrink-0">
+                  <FormLabel>Endereço</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Rua, número e complemento" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <FormField
               control={form.control}
               name="state"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="w-full md:flex-1 shrink-0">
                   <FormLabel>Estado</FormLabel>
                   <Select 
                     onValueChange={handleStateChange} 
@@ -308,7 +334,7 @@ export default function CompanySignupForm({ onSubmit }: CompanySignupFormProps) 
                   >
                     <FormControl>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Selecione o estado" />
+                        <SelectValue placeholder="Estado" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -328,7 +354,7 @@ export default function CompanySignupForm({ onSubmit }: CompanySignupFormProps) 
               control={form.control}
               name="city"
               render={({ field }) => (
-                <FormItem className="md:col-span-2">
+                <FormItem className="w-full md:flex-1 shrink-0">
                   <FormLabel>Cidade</FormLabel>
                   <Select 
                     onValueChange={field.onChange} 
@@ -340,10 +366,10 @@ export default function CompanySignupForm({ onSubmit }: CompanySignupFormProps) 
                         <SelectValue 
                           placeholder={
                             !selectedState 
-                              ? "Selecione primeiro um estado" 
+                              ? "Escolha estado" 
                               : loading 
-                              ? "Carregando cidades..." 
-                              : "Selecione a cidade"
+                              ? "Carregando..." 
+                              : "Cidade"
                           } 
                         />
                       </SelectTrigger>
@@ -399,7 +425,7 @@ export default function CompanySignupForm({ onSubmit }: CompanySignupFormProps) 
                         type="button"
                         variant="ghost"
                         size="icon-sm"
-                        className="absolute right-2 top-1/2 transform -translate-y-1/2 h-7 w-7"
+                        className="absolute right-2 top-1/2 transform -translate-y-1/2 h-7 w-7 cursor-pointer"
                         onClick={() => setShowPassword(!showPassword)}
                       >
                         {showPassword ? (
@@ -459,4 +485,8 @@ export default function CompanySignupForm({ onSubmit }: CompanySignupFormProps) 
       </Form>
     </div>
   );
-}
+});
+
+CompanySignupForm.displayName = 'CompanySignupForm';
+
+export default CompanySignupForm;

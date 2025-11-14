@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useState, forwardRef, useImperativeHandle } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -24,35 +24,77 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { producerSignupSchema, type ProducerSignupData } from "@/lib/schemas-producer";
+import { BRAZILIAN_STATES } from "@/lib/constants";
+import { useCities } from "@/lib/services/ibge";
 
 interface ProducerSignupFormProps {
-  onSubmit: (data: ProducerSignupData) => void;
+  onSubmit: (data: ProducerSignupData) => Promise<void> | void;
 }
 
-export default function ProducerSignupForm({ onSubmit }: ProducerSignupFormProps) {
+export interface ProducerSignupFormRef {
+  reset: () => void;
+}
+
+const ProducerSignupForm = forwardRef<ProducerSignupFormRef, ProducerSignupFormProps>(
+  ({ onSubmit }, ref) => {
   const [showPassword, setShowPassword] = useState(false);
+  const [selectedState, setSelectedState] = useState<string>("");
+  const { cities, loading, error, loadCities, clearCities } = useCities();
 
   const form = useForm<ProducerSignupData>({
     resolver: zodResolver(producerSignupSchema),
     defaultValues: {
       cpf: "",
       producerName: "",
-      propertyType: "",
-      activity: "",
       whatsapp: "",
       address: "",
       state: "",
       city: "",
+      partnerCompanyCode: "",
       email: "",
       password: "",
       acceptTerms: false,
     },
   });
 
-  const handleSubmit = (data: ProducerSignupData) => {
-    console.log("Producer signup data:", data);
-    onSubmit(data);
+  useImperativeHandle(ref, () => ({
+    reset: () => {
+      form.reset();
+      setSelectedState("");
+      clearCities();
+      setShowPassword(false);
+    }
+  }));
+
+  const handleStateChange = (stateCode: string) => {
+    setSelectedState(stateCode);
+    form.setValue("state", stateCode);
+    form.setValue("city", "");
+    
+    if (stateCode) {
+      loadCities(stateCode);
+    } else {
+      clearCities();
+    }
   };
+
+  const handleSubmit: SubmitHandler<ProducerSignupData> = async (data) => {
+    console.log("📋 Producer signup data:", data);
+    console.log("❌ Form errors:", form.formState.errors);
+    console.log("✅ Form valid:", form.formState.isValid);
+    
+    try {
+      await onSubmit(data);
+    } catch (error) {
+      console.error("❌ Erro no handleSubmit:", error);
+    }
+  };
+
+  console.log("🔍 Form state:", {
+    isSubmitting: form.formState.isSubmitting,
+    isValid: form.formState.isValid,
+    errors: form.formState.errors
+  });
 
   const formatCPF = (value: string) => {
     const numbers = value.replace(/\D/g, "");
@@ -65,14 +107,30 @@ export default function ProducerSignupForm({ onSubmit }: ProducerSignupFormProps
 
   const formatPhone = (value: string) => {
     const numbers = value.replace(/\D/g, "");
-    return numbers
-      .replace(/(\d{2})(\d)/, "$1 $2")
-      .replace(/(\d{4,5})(\d)/, "$1 $2")
-      .substring(0, 14);
+    
+    if (numbers.length >= 11) {
+      return numbers
+        .replace(/(\d{2})(\d)/, "($1) $2")
+        .replace(/(\d{5})(\d)/, "$1-$2")
+        .substring(0, 15); // (XX) XXXXX-XXXX = 15 caracteres
+    }
+    
+    if (numbers.length >= 6) {
+      return numbers
+        .replace(/(\d{2})(\d)/, "($1) $2")
+        .replace(/(\d{4})(\d)/, "$1-$2")
+        .substring(0, 14); // (XX) XXXX-XXXX = 14 caracteres
+    }
+    
+    if (numbers.length >= 2) {
+      return numbers.replace(/(\d{2})(\d)/, "($1) $2");
+    }
+    
+    return numbers;
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
+    <div className="w-full max-w-[872px] mx-auto bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
       <div className="text-center mb-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-2">
           Cadastre-se Agora
@@ -80,8 +138,27 @@ export default function ProducerSignupForm({ onSubmit }: ProducerSignupFormProps
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form 
+          onSubmit={form.handleSubmit(handleSubmit)} 
+          className="space-y-6"
+          onSubmitCapture={() => console.log("🎯 Form submit event captured")}
+        >
+          {/* Primeira linha: Nome Completo, CPF, Telefone com WhatsApp */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <FormField
+              control={form.control}
+              name="producerName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nome completo</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Insira seu nome completo" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={form.control}
               name="cpf"
@@ -105,85 +182,13 @@ export default function ProducerSignupForm({ onSubmit }: ProducerSignupFormProps
 
             <FormField
               control={form.control}
-              name="producerName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nome completo</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Insira seu nome completo" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="propertyType"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Tipo de propriedade</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione o tipo de propriedade" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="pequena">Pequena (até 50 hectares)</SelectItem>
-                      <SelectItem value="media">Média (50 a 200 hectares)</SelectItem>
-                      <SelectItem value="grande">Grande (acima de 200 hectares)</SelectItem>
-                      <SelectItem value="familiar">Agricultura Familiar</SelectItem>
-                      <SelectItem value="organica">Agricultura Orgânica</SelectItem>
-                      <SelectItem value="hidroponica">Hidroponia</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="activity"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Atividade principal</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione a atividade principal" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="soja">Cultivo de Soja</SelectItem>
-                      <SelectItem value="milho">Cultivo de Milho</SelectItem>
-                      <SelectItem value="cana">Cultivo de Cana-de-açúcar</SelectItem>
-                      <SelectItem value="cafe">Cultivo de Café</SelectItem>
-                      <SelectItem value="algodao">Cultivo de Algodão</SelectItem>
-                      <SelectItem value="feijao">Cultivo de Feijão</SelectItem>
-                      <SelectItem value="bovinos">Criação de Bovinos</SelectItem>
-                      <SelectItem value="suinos">Criação de Suínos</SelectItem>
-                      <SelectItem value="aves">Criação de Aves</SelectItem>
-                      <SelectItem value="frutas">Fruticultura</SelectItem>
-                      <SelectItem value="hortalicas">Horticultura</SelectItem>
-                      <SelectItem value="mista">Atividade Mista</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
               name="whatsapp"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Telefone com WhatsApp</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="34 3241 8940"
+                      placeholder="(34) 99999-9999"
                       {...field}
                       onChange={(e) => {
                         const formatted = formatPhone(e.target.value);
@@ -195,15 +200,18 @@ export default function ProducerSignupForm({ onSubmit }: ProducerSignupFormProps
                 </FormItem>
               )}
             />
+          </div>
 
+          {/* Segunda linha: Endereço, Estado e Município */}
+          <div className="flex flex-col md:flex-row gap-4 w-full">
             <FormField
               control={form.control}
               name="address"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="w-full md:flex-2 shrink-0">
                   <FormLabel>Endereço</FormLabel>
                   <FormControl>
-                    <Input placeholder="Endereço da propriedade rural" {...field} />
+                    <Input placeholder="Rua, número e complemento" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -214,42 +222,23 @@ export default function ProducerSignupForm({ onSubmit }: ProducerSignupFormProps
               control={form.control}
               name="state"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="w-full md:flex-1 shrink-0">
                   <FormLabel>Estado</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select 
+                    onValueChange={handleStateChange} 
+                    defaultValue={field.value}
+                  >
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione o estado" />
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Estado" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="ac">Acre</SelectItem>
-                      <SelectItem value="al">Alagoas</SelectItem>
-                      <SelectItem value="ap">Amapá</SelectItem>
-                      <SelectItem value="am">Amazonas</SelectItem>
-                      <SelectItem value="ba">Bahia</SelectItem>
-                      <SelectItem value="ce">Ceará</SelectItem>
-                      <SelectItem value="df">Distrito Federal</SelectItem>
-                      <SelectItem value="es">Espírito Santo</SelectItem>
-                      <SelectItem value="go">Goiás</SelectItem>
-                      <SelectItem value="ma">Maranhão</SelectItem>
-                      <SelectItem value="mt">Mato Grosso</SelectItem>
-                      <SelectItem value="ms">Mato Grosso do Sul</SelectItem>
-                      <SelectItem value="mg">Minas Gerais</SelectItem>
-                      <SelectItem value="pa">Pará</SelectItem>
-                      <SelectItem value="pb">Paraíba</SelectItem>
-                      <SelectItem value="pr">Paraná</SelectItem>
-                      <SelectItem value="pe">Pernambuco</SelectItem>
-                      <SelectItem value="pi">Piauí</SelectItem>
-                      <SelectItem value="rj">Rio de Janeiro</SelectItem>
-                      <SelectItem value="rn">Rio Grande do Norte</SelectItem>
-                      <SelectItem value="rs">Rio Grande do Sul</SelectItem>
-                      <SelectItem value="ro">Rondônia</SelectItem>
-                      <SelectItem value="rr">Roraima</SelectItem>
-                      <SelectItem value="sc">Santa Catarina</SelectItem>
-                      <SelectItem value="sp">São Paulo</SelectItem>
-                      <SelectItem value="se">Sergipe</SelectItem>
-                      <SelectItem value="to">Tocantins</SelectItem>
+                      {BRAZILIAN_STATES.map((state) => (
+                        <SelectItem key={state.value} value={state.value}>
+                          {state.label}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -261,10 +250,51 @@ export default function ProducerSignupForm({ onSubmit }: ProducerSignupFormProps
               control={form.control}
               name="city"
               render={({ field }) => (
+                <FormItem className="w-full md:flex-1 shrink-0">
+                  <FormLabel>Cidade</FormLabel>
+                  <Select 
+                    onValueChange={field.onChange} 
+                    defaultValue={field.value}
+                    disabled={!selectedState || loading}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue 
+                          placeholder={
+                            !selectedState 
+                              ? "Escolha estado" 
+                              : loading 
+                              ? "Carregando..." 
+                              : "Cidade"
+                          } 
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {cities.map((city) => (
+                        <SelectItem key={city.value} value={city.value}>
+                          {city.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {error && <p className="text-sm text-red-500">{error}</p>}
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          {/* Terceira linha: Código da empresa parceira, e-mail, senha */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <FormField
+              control={form.control}
+              name="partnerCompanyCode"
+              render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Município</FormLabel>
+                  <FormLabel>Código da empresa parceira</FormLabel>
                   <FormControl>
-                    <Input placeholder="Informe a cidade" {...field} />
+                    <Input placeholder="Digite o código" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -275,12 +305,12 @@ export default function ProducerSignupForm({ onSubmit }: ProducerSignupFormProps
               control={form.control}
               name="email"
               render={({ field }) => (
-                <FormItem className="md:col-span-2">
-                  <FormLabel>Email pessoal</FormLabel>
+                <FormItem>
+                  <FormLabel>Email corporativo</FormLabel>
                   <FormControl>
                     <Input
                       type="email"
-                      placeholder="seu.email@gmail.com"
+                      placeholder="zakrisht2l0@gmail.com"
                       {...field}
                     />
                   </FormControl>
@@ -293,7 +323,7 @@ export default function ProducerSignupForm({ onSubmit }: ProducerSignupFormProps
               control={form.control}
               name="password"
               render={({ field }) => (
-                <FormItem className="md:col-span-2">
+                <FormItem>
                   <FormLabel>Senha</FormLabel>
                   <FormControl>
                     <div className="relative">
@@ -306,7 +336,7 @@ export default function ProducerSignupForm({ onSubmit }: ProducerSignupFormProps
                         type="button"
                         variant="ghost"
                         size="icon-sm"
-                        className="absolute right-2 top-1/2 transform -translate-y-1/2 h-7 w-7"
+                        className="absolute right-2 top-1/2 transform -translate-y-1/2 h-7 w-7 cursor-pointer"
                         onClick={() => setShowPassword(!showPassword)}
                       >
                         {showPassword ? (
@@ -327,15 +357,16 @@ export default function ProducerSignupForm({ onSubmit }: ProducerSignupFormProps
             control={form.control}
             name="acceptTerms"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+              <FormItem className="flex flex-row items-start justify-center space-x-3 space-y-0">
                 <FormControl>
                   <Checkbox
                     checked={field.value}
                     onCheckedChange={field.onChange}
+                    className="data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 border-blue-600"
                   />
                 </FormControl>
                 <div className="space-y-1 leading-none">
-                  <Label className="text-sm text-gray-600">
+                  <Label className="text-sm text-blue-600 cursor-pointer">
                     <span>Aceito os </span>
                     <button
                       type="button"
@@ -349,21 +380,24 @@ export default function ProducerSignupForm({ onSubmit }: ProducerSignupFormProps
               </FormItem>
             )}
           />
-
+          <Button
+            type="submit"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-md font-medium cursor-pointer"
+            disabled={form.formState.isSubmitting}
+            onClick={() => console.log("🔘 Botão submit clicado")}
+          >
+            {form.formState.isSubmitting ? "Realizando Cadastro..." : "Realizar Cadastro"}
+          </Button>
           <p className="text-xs text-gray-500 text-center">
             Ao cadastrar-se como produtor rural, você terá acesso a benefícios
             exclusivos e poderá conectar-se com empresas parceiras.
           </p>
-
-          <Button
-            type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-md font-medium"
-            disabled={form.formState.isSubmitting}
-          >
-            {form.formState.isSubmitting ? "Realizando Cadastro..." : "Realizar Cadastro"}
-          </Button>
         </form>
       </Form>
     </div>
   );
-}
+});
+
+ProducerSignupForm.displayName = 'ProducerSignupForm';
+
+export default ProducerSignupForm;

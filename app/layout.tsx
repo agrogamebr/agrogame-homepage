@@ -14,7 +14,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AgroGame - Transforme o relacionamento em benefícios"
+  title: "AgroGame - Transforme o relacionamento em benefícios",
+  icons: {
+    icon: "/whiteLogo.svg",
+  }
 };
 
 export default function RootLayout({
