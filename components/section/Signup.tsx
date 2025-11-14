@@ -1,17 +1,21 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { SignupType } from "@/components/common/signuptype";
 import CompanySignupForm from "@/components/forms/CompanySignupForm";
+import type { CompanySignupFormRef } from "@/components/forms/CompanySignupForm";
 import { CompanySignupData } from "@/lib/schemas";
 import { ProducerSignupData } from "@/lib/schemas-producer";
 import { useCreateCompany } from "@/lib/api/company";
 import { useToast } from "@/components/ui/toast";
 
 import ProducerSignupForm from "../forms/ProducerSignupForm";
+import type { ProducerSignupFormRef } from "../forms/ProducerSignupForm";
 
 export default function SignupSection() {
   const [selectedType, setSelectedType] = useState<boolean>(false); // false = empresa, true = produtor
+  const companyFormRef = useRef<CompanySignupFormRef>(null);
+  const producerFormRef = useRef<ProducerSignupFormRef>(null);
 
   const { showToast, ToastContainer } = useToast();
   const createCompanyMutation = useCreateCompany();
@@ -39,7 +43,7 @@ export default function SignupSection() {
       );
       console.log("✅ Empresa cadastrada com sucesso:", result);
       
-      // TODO: Validar o que deve ser feito após cadastro bem-sucedido
+      companyFormRef.current?.reset();
       
     } catch (error) {
       console.error("❌ Erro completo ao cadastrar empresa:", error);
@@ -50,22 +54,66 @@ export default function SignupSection() {
         errorMessage = error.message;
       }
 
-      if (errorMessage.includes('CNPJ')) {
+      console.log("Singup ERROR: ", errorMessage);
+
+      if (errorMessage.toLowerCase().includes('cnpj')) {
         errorMessage = 'CNPJ inválido ou já cadastrado';
-      } else if (errorMessage.includes('email')) {
+      } else if (errorMessage.toLowerCase().includes('email') || errorMessage.toLowerCase().includes('e-mail')) {
         errorMessage = 'Email já cadastrado ou inválido';
-      } else if (errorMessage.includes('network') || errorMessage.includes('fetch')) {
+      } else if (errorMessage.toLowerCase().includes('network') || errorMessage.toLowerCase().includes('fetch')) {
         errorMessage = 'Erro de conexão. Verifique sua internet e tente novamente';
+      } else if (errorMessage.toLowerCase().includes('timeout')) {
+        errorMessage = 'Tempo de resposta excedido. Tente novamente';
+      } else if (errorMessage.toLowerCase().includes('400')) {
+        errorMessage = 'Dados inválidos. Verifique as informações e tente novamente';
+      } else if (errorMessage.toLowerCase().includes('500')) {
+        errorMessage = 'Erro no servidor. Tente novamente mais tarde';
       }
       
       showToast(errorMessage, 'error');
     }
   };
 
-  const handleProducerSignup = (data: ProducerSignupData) => {
-    console.log("Producer registration:", data);
-    // TODO: Implementar integração com API do produtor
-    alert("Cadastro de produtor realizado com sucesso!");
+  const handleProducerSignup = async (data: ProducerSignupData) => {
+    try {
+      console.log("Producer registration:", data);
+      
+      // TODO: Implementar integração com API do produtor
+      // const result = await createProducerMutation.mutateAsync(data);
+      
+      showToast(
+        'Cadastro de produtor realizado com sucesso!',
+        'success'
+      );
+      
+      // Resetar formulário após sucesso
+      producerFormRef.current?.reset();
+      
+    } catch (error) {
+      console.error("❌ Erro ao cadastrar produtor:", error);
+      
+      let errorMessage = 'Erro inesperado ao cadastrar produtor';
+      
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+
+      if (errorMessage.toLowerCase().includes('cpf')) {
+        errorMessage = 'CPF inválido ou já cadastrado';
+      } else if (errorMessage.toLowerCase().includes('email') || errorMessage.toLowerCase().includes('e-mail')) {
+        errorMessage = 'Email já cadastrado ou inválido';
+      } else if (errorMessage.toLowerCase().includes('network') || errorMessage.toLowerCase().includes('fetch')) {
+        errorMessage = 'Erro de conexão. Verifique sua internet e tente novamente';
+      } else if (errorMessage.toLowerCase().includes('timeout')) {
+        errorMessage = 'Tempo de resposta excedido. Tente novamente';
+      } else if (errorMessage.toLowerCase().includes('400')) {
+        errorMessage = 'Dados inválidos. Verifique as informações e tente novamente';
+      } else if (errorMessage.toLowerCase().includes('500')) {
+        errorMessage = 'Erro no servidor. Tente novamente mais tarde';
+      }
+      
+      showToast(errorMessage, 'error');
+    }
   };
 
   return (
@@ -92,9 +140,9 @@ export default function SignupSection() {
 
             <div className="mt-12">
               {!selectedType ? (
-                <CompanySignupForm onSubmit={handleCompanySignup} />
+                <CompanySignupForm ref={companyFormRef} onSubmit={handleCompanySignup} />
               ) : (
-                <ProducerSignupForm onSubmit={handleProducerSignup} />
+                <ProducerSignupForm ref={producerFormRef} onSubmit={handleProducerSignup} />
               )}
             </div>
           </div>

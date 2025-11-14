@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, forwardRef, useImperativeHandle } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
@@ -32,7 +32,12 @@ interface CompanySignupFormProps {
   onSubmit: (data: CompanySignupData) => Promise<void> | void;
 }
 
-export default function CompanySignupForm({ onSubmit }: CompanySignupFormProps) {
+export interface CompanySignupFormRef {
+  reset: () => void;
+}
+
+const CompanySignupForm = forwardRef<CompanySignupFormRef, CompanySignupFormProps>(
+  ({ onSubmit }, ref) => {
   const [showPassword, setShowPassword] = useState(false);
   const [selectedState, setSelectedState] = useState<string>("");
   const { cities, loading, error, loadCities, clearCities } = useCities();
@@ -56,6 +61,15 @@ export default function CompanySignupForm({ onSubmit }: CompanySignupFormProps) 
       acceptTerms: false,
     },
   });
+
+  useImperativeHandle(ref, () => ({
+    reset: () => {
+      form.reset();
+      setSelectedState("");
+      clearCities();
+      setShowPassword(false);
+    }
+  }));
 
   const handleStateChange = (stateCode: string) => {
     setSelectedState(stateCode);
@@ -181,7 +195,7 @@ export default function CompanySignupForm({ onSubmit }: CompanySignupFormProps) 
                 <FormLabel>Segmento de atuação</FormLabel>
                 <Select 
                   onValueChange={field.onChange} 
-                  defaultValue={field.value}
+                  value={field.value}
                   disabled={isLoadingTypes}
                 >
                   <FormControl>
@@ -197,7 +211,7 @@ export default function CompanySignupForm({ onSubmit }: CompanySignupFormProps) 
                   </FormControl>
                   <SelectContent>
                     {companyTypes?.map((type) => (
-                      <SelectItem key={type.id} value={type.id}>
+                      <SelectItem key={type.id} value={type.name}>
                         {type.name}
                       </SelectItem>
                     ))}
@@ -471,4 +485,8 @@ export default function CompanySignupForm({ onSubmit }: CompanySignupFormProps) 
       </Form>
     </div>
   );
-}
+});
+
+CompanySignupForm.displayName = 'CompanySignupForm';
+
+export default CompanySignupForm;

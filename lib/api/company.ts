@@ -25,8 +25,6 @@ const createCompany = async (data: CompanySignupData): Promise<CompanyCreateResp
   try {
     const apiData = mapFormToApi(data);
     
-    console.log("🔄 Dados enviados para API:", apiData);
-    
     const response = await api
       .post("api/company/create-company", {
         json: apiData,
@@ -39,17 +37,18 @@ const createCompany = async (data: CompanySignupData): Promise<CompanyCreateResp
     return response;
   } catch (error) {
     const apiError = handleApiError(error);
+    let errorMessage: string | null = null;
 
     if (apiError.response) {
       try {
         const errorData = await apiError.response.json() as { message?: string; error?: string };
-        throw new Error(errorData.message || errorData.error || "Erro ao cadastrar empresa");
+        errorMessage = errorData.message || errorData.error || "Erro ao cadastrar empresa";
       } catch {
         throw new Error("Erro ao cadastrar empresa");
       }
     }
-    
-    throw apiError;
+
+    throw new Error(errorMessage || apiError.message || "Erro ao cadastrar empresa");
   }
 };
 

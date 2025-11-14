@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, forwardRef, useImperativeHandle } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
@@ -31,7 +31,12 @@ interface ProducerSignupFormProps {
   onSubmit: (data: ProducerSignupData) => Promise<void> | void;
 }
 
-export default function ProducerSignupForm({ onSubmit }: ProducerSignupFormProps) {
+export interface ProducerSignupFormRef {
+  reset: () => void;
+}
+
+const ProducerSignupForm = forwardRef<ProducerSignupFormRef, ProducerSignupFormProps>(
+  ({ onSubmit }, ref) => {
   const [showPassword, setShowPassword] = useState(false);
   const [selectedState, setSelectedState] = useState<string>("");
   const { cities, loading, error, loadCities, clearCities } = useCities();
@@ -51,6 +56,15 @@ export default function ProducerSignupForm({ onSubmit }: ProducerSignupFormProps
       acceptTerms: false,
     },
   });
+
+  useImperativeHandle(ref, () => ({
+    reset: () => {
+      form.reset();
+      setSelectedState("");
+      clearCities();
+      setShowPassword(false);
+    }
+  }));
 
   const handleStateChange = (stateCode: string) => {
     setSelectedState(stateCode);
@@ -382,4 +396,8 @@ export default function ProducerSignupForm({ onSubmit }: ProducerSignupFormProps
       </Form>
     </div>
   );
-}
+});
+
+ProducerSignupForm.displayName = 'ProducerSignupForm';
+
+export default ProducerSignupForm;
