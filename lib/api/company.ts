@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { api, handleApiError } from "@/lib/api";
-import { CompanySignupData, mapFormToApi } from "@/lib/schemas";
+import { CompanySignupData, mapFormToApi } from "@/lib/schemas/companySignup";
 
 export interface CompanyType {
   id: string;

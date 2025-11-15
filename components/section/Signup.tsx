@@ -4,9 +4,10 @@ import { useState, useEffect, useRef } from "react";
 import { SignupType } from "@/components/common/signuptype";
 import CompanySignupForm from "@/components/forms/CompanySignupForm";
 import type { CompanySignupFormRef } from "@/components/forms/CompanySignupForm";
-import { CompanySignupData } from "@/lib/schemas";
-import { ProducerSignupData } from "@/lib/schemas-producer";
+import { CompanySignupData } from "@/lib/schemas/companySignup";
+import { ProducerSignupData } from "@/lib/schemas/producerSignup";
 import { useCreateCompany } from "@/lib/api/company";
+import { useCreateProducer } from "@/lib/api/producer";
 import { useToast } from "@/components/ui/toast";
 
 import ProducerSignupForm from "../forms/ProducerSignupForm";
@@ -19,6 +20,7 @@ export default function SignupSection() {
 
   const { showToast, ToastContainer } = useToast();
   const createCompanyMutation = useCreateCompany();
+  const createProducerMutation = useCreateProducer();
 
   useEffect(() => {
     const handleSetSignupType = (event: CustomEvent<{ type: 'company' | 'producer' }>) => {
@@ -76,15 +78,13 @@ export default function SignupSection() {
 
   const handleProducerSignup = async (data: ProducerSignupData) => {
     try {
-      console.log("Producer registration:", data);
-      
-      // TODO: Implementar integração com API do produtor
-      // const result = await createProducerMutation.mutateAsync(data);
-      
+      const result = await createProducerMutation.mutateAsync(data);
+
       showToast(
-        'Cadastro de produtor realizado com sucesso!',
+        result.message || 'Cadastro de produtor realizado com sucesso!',
         'success'
       );
+      console.log("✅ Produtor cadastrado com sucesso:", result);
       
       // Resetar formulário após sucesso
       producerFormRef.current?.reset();
@@ -98,8 +98,9 @@ export default function SignupSection() {
         errorMessage = error.message;
       }
 
-      if (errorMessage.toLowerCase().includes('cpf')) {
-        errorMessage = 'CPF inválido ou já cadastrado';
+      // Tratamento específico de erros
+      if (errorMessage.toLowerCase().includes('cpf') || errorMessage.toLowerCase().includes('documento')) {
+        errorMessage = 'Documento inválido ou já cadastrado';
       } else if (errorMessage.toLowerCase().includes('email') || errorMessage.toLowerCase().includes('e-mail')) {
         errorMessage = 'Email já cadastrado ou inválido';
       } else if (errorMessage.toLowerCase().includes('network') || errorMessage.toLowerCase().includes('fetch')) {

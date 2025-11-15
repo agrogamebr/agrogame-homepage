@@ -23,7 +23,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { companySignupSchema, type CompanySignupData, mapFormToApi } from "@/lib/schemas";
+import { companySignupSchema, type CompanySignupData, mapFormToApi } from "@/lib/schemas/companySignup";
 import { BRAZILIAN_STATES } from "@/lib/constants";
 import { useCities } from "@/lib/services/ibge";
 import { useCompanyTypes } from "@/lib/api/company";
@@ -48,7 +48,7 @@ const CompanySignupForm = forwardRef<CompanySignupFormRef, CompanySignupFormProp
     defaultValues: {
       cnpj: "",
       companyName: "",
-      segment: "",
+      companyTypeId: 0,
       activity: "",
       whatsapp: "",
       responsibleName: "",
@@ -189,13 +189,13 @@ const CompanySignupForm = forwardRef<CompanySignupFormRef, CompanySignupFormProp
 
           <FormField
             control={form.control}
-            name="segment"
+            name="companyTypeId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Segmento de atuação</FormLabel>
+                <FormLabel>Tipo de empresa</FormLabel>
                 <Select 
-                  onValueChange={field.onChange} 
-                  value={field.value}
+                  onValueChange={(value) => field.onChange(Number(value))} 
+                  value={field.value?.toString()}
                   disabled={isLoadingTypes}
                 >
                   <FormControl>
@@ -203,15 +203,15 @@ const CompanySignupForm = forwardRef<CompanySignupFormRef, CompanySignupFormProp
                       <SelectValue 
                         placeholder={
                           isLoadingTypes 
-                            ? "Carregando segmentos..." 
-                            : "Informe o segmento de atuação"
+                            ? "Carregando tipos de empresa..." 
+                            : "Selecione o tipo de empresa"
                         } 
                       />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
                     {companyTypes?.map((type) => (
-                      <SelectItem key={type.id} value={type.name}>
+                      <SelectItem key={type.id} value={type.id.toString()}>
                         {type.name}
                       </SelectItem>
                     ))}
