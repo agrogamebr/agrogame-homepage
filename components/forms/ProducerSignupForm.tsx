@@ -23,9 +23,11 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { producerSignupSchema, type ProducerSignupData } from "@/lib/schemas-producer";
+import { producerSignupSchema, type ProducerSignupData } from "@/lib/schemas/producerSignup";
 import { BRAZILIAN_STATES } from "@/lib/constants";
 import { useCities } from "@/lib/services/ibge";
+import { useDocumentTypes, useActiveCompanies } from "@/lib/api/producer";
+import { formatPhoneNumber } from "@/lib/utils/phone";
 
 interface ProducerSignupFormProps {
   onSubmit: (data: ProducerSignupData) => Promise<void> | void;
@@ -39,19 +41,25 @@ const ProducerSignupForm = forwardRef<ProducerSignupFormRef, ProducerSignupFormP
   ({ onSubmit }, ref) => {
   const [showPassword, setShowPassword] = useState(false);
   const [selectedState, setSelectedState] = useState<string>("");
+  const [selectedDocType, setSelectedDocType] = useState<string>("");
   const { cities, loading, error, loadCities, clearCities } = useCities();
+  const { data: documentTypes, isLoading: isLoadingDocTypes } = useDocumentTypes();
+  const { data: activeCompanies, isLoading: isLoadingCompanies } = useActiveCompanies();
 
   const form = useForm<ProducerSignupData>({
     resolver: zodResolver(producerSignupSchema),
     defaultValues: {
-      cpf: "",
-      producerName: "",
-      whatsapp: "",
-      address: "",
-      state: "",
-      city: "",
-      partnerCompanyCode: "",
+      fullName: "",
+      documentTypeId: "",
+      documentNumber: "",
+      phone: "",
       email: "",
+      state: "",
+      address: "",
+      number: "",
+      city: "",
+      zipcode: "",
+      companyId: "",
       password: "",
       acceptTerms: false,
     },
@@ -61,6 +69,7 @@ const ProducerSignupForm = forwardRef<ProducerSignupFormRef, ProducerSignupFormP
     reset: () => {
       form.reset();
       setSelectedState("");
+      setSelectedDocType("");
       clearCities();
       setShowPassword(false);
     }
@@ -79,9 +88,9 @@ const ProducerSignupForm = forwardRef<ProducerSignupFormRef, ProducerSignupFormP
   };
 
   const handleSubmit: SubmitHandler<ProducerSignupData> = async (data) => {
-    console.log("📋 Producer signup data:", data);
-    console.log("❌ Form errors:", form.formState.errors);
-    console.log("✅ Form valid:", form.formState.isValid);
+    // console.log("📋 Producer signup data:", data);
+    // console.log("❌ Form errors:", form.formState.errors);
+    // console.log("✅ Form valid:", form.formState.isValid);
     
     try {
       await onSubmit(data);
@@ -96,37 +105,38 @@ const ProducerSignupForm = forwardRef<ProducerSignupFormRef, ProducerSignupFormP
     errors: form.formState.errors
   });
 
-  const formatCPF = (value: string) => {
+  const formatDocument = (value: string, documentType: string) => {
     const numbers = value.replace(/\D/g, "");
-    return numbers
-      .replace(/(\d{3})(\d)/, "$1.$2")
-      .replace(/(\d{3})(\d)/, "$1.$2")
-      .replace(/(\d{3})(\d)/, "$1-$2")
-      .substring(0, 14);
+    const docTypeName = documentTypes?.find(dt => dt.id.toString() === documentType)?.name.toLowerCase();
+    
+    // CPF: XXX.XXX.XXX-XX
+    if (docTypeName?.includes('cpf')) {
+      return numbers
+        .replace(/(\d{3})(\d)/, "$1.$2")
+        .replace(/(\d{3})(\d)/, "$1.$2")
+        .replace(/(\d{3})(\d)/, "$1-$2")
+        .substring(0, 14);
+    }
+    
+    // CNPJ: XX.XXX.XXX/XXXX-XX
+    if (docTypeName?.includes('cnpj')) {
+      return numbers
+        .replace(/(\d{2})(\d)/, "$1.$2")
+        .replace(/(\d{3})(\d)/, "$1.$2")
+        .replace(/(\d{3})(\d)/, "$1/$2")
+        .replace(/(\d{4})(\d)/, "$1-$2")
+        .substring(0, 18);
+    }
+    
+    // RG, Passaporte e outros: sem máscara
+    return value.toUpperCase();
   };
 
-  const formatPhone = (value: string) => {
+  const formatCEP = (value: string) => {
     const numbers = value.replace(/\D/g, "");
-    
-    if (numbers.length >= 11) {
-      return numbers
-        .replace(/(\d{2})(\d)/, "($1) $2")
-        .replace(/(\d{5})(\d)/, "$1-$2")
-        .substring(0, 15); // (XX) XXXXX-XXXX = 15 caracteres
-    }
-    
-    if (numbers.length >= 6) {
-      return numbers
-        .replace(/(\d{2})(\d)/, "($1) $2")
-        .replace(/(\d{4})(\d)/, "$1-$2")
-        .substring(0, 14); // (XX) XXXX-XXXX = 14 caracteres
-    }
-    
-    if (numbers.length >= 2) {
-      return numbers.replace(/(\d{2})(\d)/, "($1) $2");
-    }
-    
-    return numbers;
+    return numbers
+      .replace(/(\d{5})(\d)/, "$1-$2")
+      .substring(0, 9);
   };
 
   return (
@@ -143,11 +153,10 @@ const ProducerSignupForm = forwardRef<ProducerSignupFormRef, ProducerSignupFormP
           className="space-y-6"
           onSubmitCapture={() => console.log("🎯 Form submit event captured")}
         >
-          {/* Primeira linha: Nome Completo, CPF, Telefone com WhatsApp */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <FormField
               control={form.control}
-              name="producerName"
+              name="fullName"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Nome completo</FormLabel>
@@ -161,20 +170,38 @@ const ProducerSignupForm = forwardRef<ProducerSignupFormRef, ProducerSignupFormP
 
             <FormField
               control={form.control}
-              name="cpf"
+              name="documentTypeId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>CPF</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="000.000.000-00"
-                      {...field}
-                      onChange={(e) => {
-                        const formatted = formatCPF(e.target.value);
-                        field.onChange(formatted);
-                      }}
-                    />
-                  </FormControl>
+                  <FormLabel>Tipo de Documento</FormLabel>
+                  <Select 
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                      setSelectedDocType(value);
+                      form.setValue("documentNumber", "");
+                    }} 
+                    value={field.value}
+                    disabled={isLoadingDocTypes}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue 
+                          placeholder={
+                            isLoadingDocTypes 
+                              ? "Carregando..." 
+                              : "Selecione o tipo"
+                          } 
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {documentTypes?.map((type) => (
+                        <SelectItem key={type.id} value={type.id.toString()}>
+                          {type.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
@@ -182,7 +209,46 @@ const ProducerSignupForm = forwardRef<ProducerSignupFormRef, ProducerSignupFormP
 
             <FormField
               control={form.control}
-              name="whatsapp"
+              name="documentNumber"
+              render={({ field }) => {
+                const docTypeName = documentTypes?.find(dt => dt.id.toString() === selectedDocType)?.name.toLowerCase();
+                let placeholder = "Digite o número";
+                
+                if (docTypeName?.includes('cpf')) {
+                  placeholder = "000.000.000-00";
+                } else if (docTypeName?.includes('cnpj')) {
+                  placeholder = "00.000.000/0000-00";
+                } else if (docTypeName?.includes('rg')) {
+                  placeholder = "Digite o RG";
+                } else if (docTypeName?.includes('passaporte')) {
+                  placeholder = "Digite o passaporte";
+                }
+                
+                return (
+                  <FormItem>
+                    <FormLabel>Número do Documento</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder={placeholder}
+                        disabled={!selectedDocType}
+                        {...field}
+                        onChange={(e) => {
+                          const formatted = formatDocument(e.target.value, selectedDocType);
+                          field.onChange(formatted);
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <FormField
+              control={form.control}
+              name="phone"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Telefone com WhatsApp</FormLabel>
@@ -191,7 +257,7 @@ const ProducerSignupForm = forwardRef<ProducerSignupFormRef, ProducerSignupFormP
                       placeholder="(34) 99999-9999"
                       {...field}
                       onChange={(e) => {
-                        const formatted = formatPhone(e.target.value);
+                        const formatted = formatPhoneNumber(e.target.value);
                         field.onChange(formatted);
                       }}
                     />
@@ -200,18 +266,72 @@ const ProducerSignupForm = forwardRef<ProducerSignupFormRef, ProducerSignupFormP
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder="seu@email.com"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
 
-          {/* Segunda linha: Endereço, Estado e Município */}
-          <div className="flex flex-col md:flex-row gap-4 w-full">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <FormField
               control={form.control}
               name="address"
               render={({ field }) => (
-                <FormItem className="w-full md:flex-2 shrink-0">
+                <FormItem className="md:col-span-2">
                   <FormLabel>Endereço</FormLabel>
                   <FormControl>
-                    <Input placeholder="Rua, número e complemento" {...field} />
+                    <Input placeholder="Rua, avenida, etc." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="number"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Número</FormLabel>
+                  <FormControl>
+                    <Input placeholder="123" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <FormField
+              control={form.control}
+              name="zipcode"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>CEP</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="00000-000"
+                      {...field}
+                      onChange={(e) => {
+                        const formatted = formatCEP(e.target.value);
+                        field.onChange(formatted);
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -222,11 +342,11 @@ const ProducerSignupForm = forwardRef<ProducerSignupFormRef, ProducerSignupFormP
               control={form.control}
               name="state"
               render={({ field }) => (
-                <FormItem className="w-full md:flex-1 shrink-0">
+                <FormItem>
                   <FormLabel>Estado</FormLabel>
                   <Select 
                     onValueChange={handleStateChange} 
-                    defaultValue={field.value}
+                    value={field.value}
                   >
                     <FormControl>
                       <SelectTrigger className="w-full">
@@ -250,11 +370,11 @@ const ProducerSignupForm = forwardRef<ProducerSignupFormRef, ProducerSignupFormP
               control={form.control}
               name="city"
               render={({ field }) => (
-                <FormItem className="w-full md:flex-1 shrink-0">
+                <FormItem>
                   <FormLabel>Cidade</FormLabel>
                   <Select 
                     onValueChange={field.onChange} 
-                    defaultValue={field.value}
+                    value={field.value}
                     disabled={!selectedState || loading}
                   >
                     <FormControl>
@@ -285,35 +405,37 @@ const ProducerSignupForm = forwardRef<ProducerSignupFormRef, ProducerSignupFormP
             />
           </div>
 
-          {/* Terceira linha: Código da empresa parceira, e-mail, senha */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormField
               control={form.control}
-              name="partnerCompanyCode"
+              name="companyId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Código da empresa parceira</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Digite o código" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email corporativo</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="email"
-                      placeholder="zakrisht2l0@gmail.com"
-                      {...field}
-                    />
-                  </FormControl>
+                  <FormLabel>Empresa Parceira</FormLabel>
+                  <Select 
+                    onValueChange={field.onChange} 
+                    value={field.value}
+                    disabled={isLoadingCompanies}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue 
+                          placeholder={
+                            isLoadingCompanies 
+                              ? "Carregando empresas..." 
+                              : "Selecione a empresa"
+                          } 
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {activeCompanies?.map((company) => (
+                        <SelectItem key={company.companyId} value={company.companyId.toString()}>
+                          {company.fullCompanyName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

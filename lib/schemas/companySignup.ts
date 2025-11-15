@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { formatPhoneNumber, validatePhoneFormat } from "../utils/phone";
 
 export const companySignupSchema = z.object({
   cnpj: z
@@ -9,9 +10,9 @@ export const companySignupSchema = z.object({
     .string()
     .min(2, "Nome da empresa deve ter pelo menos 2 caracteres")
     .max(100, "Nome da empresa deve ter no máximo 100 caracteres"),
-  segment: z
-    .string()
-    .min(1, "Selecione um segmento de atuação"),
+  companyTypeId: z
+    .number()
+    .min(1, "Selecione um tipo de empresa"),
   activity: z
     .string()
     .min(1, "Selecione um ramo de atividade"),
@@ -79,33 +80,13 @@ export const companyApiSchema = z.object({
     document: z.string(),
     primary: z.boolean()
   })),
-  //segment: z.string(),
-  companyTypeId: z.number().default(1),
-  segmentoId: z.number().optional(),
+  companyTypeId: z.number(),
   adminPassword: z.string(),
   aceiteTermos: z.boolean()
 });
 
 export type CompanySignupData = z.infer<typeof companySignupSchema>;
 export type CompanyApiData = z.infer<typeof companyApiSchema>;
-
-export const formatPhoneNumber = (phone: string): string => {
-  const cleanPhone = phone.replace(/\D/g, '');
-  
-  if (cleanPhone.length === 11) {
-    return `(${cleanPhone.slice(0, 2)}) ${cleanPhone.slice(2, 7)}-${cleanPhone.slice(7)}`;
-  }
-  
-  if (cleanPhone.length === 10) {
-    return `(${cleanPhone.slice(0, 2)}) ${cleanPhone.slice(2, 6)}-${cleanPhone.slice(6)}`;
-  }
-
-  return phone;
-};
-
-export const validatePhoneFormat = (phone: string): boolean => {
-  return /^\(\d{2}\) \d{4,5}-\d{4}$/.test(phone);
-};
 
 export const mapFormToApi = (formData: CompanySignupData): CompanyApiData => {
   const cleanCnpj = formData.cnpj.replace(/[.\-/]/g, "");
@@ -135,8 +116,7 @@ export const mapFormToApi = (formData: CompanySignupData): CompanyApiData => {
       document: "CNPJ",
       primary: true
     }],
-    companyTypeId: 1,
-    //segment: formData.segment,
+    companyTypeId: formData.companyTypeId,
     adminPassword: formData.password,
     aceiteTermos: formData.acceptTerms
   };
