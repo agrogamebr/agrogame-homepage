@@ -84,10 +84,10 @@ const CompanySignupForm = forwardRef<CompanySignupFormRef, CompanySignupFormProp
   };
 
   const handleSubmit: SubmitHandler<CompanySignupData> = async (data) => {
-    console.log("📋 Company signup data:", data);
-    console.log("🔄 Dados após mapeamento para API:", mapFormToApi(data));
-    console.log("❌ Form errors:", form.formState.errors);
-    console.log("✅ Form valid:", form.formState.isValid);
+    // console.log("📋 Company signup data:", data);
+    // console.log("🔄 Dados após mapeamento para API:", mapFormToApi(data));
+    // console.log("❌ Form errors:", form.formState.errors);
+    // console.log("✅ Form valid:", form.formState.isValid);
     
     try {
       await onSubmit(data);

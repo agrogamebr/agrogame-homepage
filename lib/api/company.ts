@@ -35,32 +35,45 @@ const createCompany = async (data: CompanySignupData): Promise<CompanyCreateResp
       .json<CompanyCreateResponse>();
 
     return response;
-  } catch (error) {
-    const apiError = handleApiError(error);
-    let errorMessage: string | null = null;
-
-    if (apiError.response) {
-      try {
-        const errorData = await apiError.response.json() as { message?: string; error?: string };
-        errorMessage = errorData.message || errorData.error || "Erro ao cadastrar empresa";
-      } catch {
-        throw new Error("Erro ao cadastrar empresa");
+  } catch (error: unknown) {
+    if (error && typeof error === 'object' && 'response' in error) {
+      const apiError = error as { response?: Response };
+      
+      if (apiError.response) {
+        try {
+          const errorData = await apiError.response.json() as { 
+            message?: string; 
+            error?: string;
+            errors?: Record<string, string[]>;
+          };
+          
+          const errorMessage = 
+            errorData.message || 
+            errorData.error || 
+            (errorData.errors ? Object.values(errorData.errors).flat().join(', ') : null);
+          
+          if (errorMessage) {
+            throw new Error(errorMessage);
+          }
+        } catch (jsonError) {
+          if (jsonError instanceof Error && jsonError.message !== 'Erro ao cadastrar empresa') {
+            throw jsonError;
+          }
+        }
       }
     }
-
-    throw new Error(errorMessage || apiError.message || "Erro ao cadastrar empresa");
+    
+    if (error instanceof Error) {
+      throw error;
+    }
+    
+    throw new Error("Erro ao cadastrar empresa");
   }
 };
 
 export const useCreateCompany = () => {
   return useMutation({
     mutationFn: createCompany,
-    onSuccess: (data) => {
-      console.log("✅ Empresa cadastrada com sucesso:", data);
-    },
-    onError: (error) => {
-      console.error("❌ Erro ao cadastrar empresa:", error);
-    },
   });
 };
 

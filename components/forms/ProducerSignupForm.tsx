@@ -88,9 +88,9 @@ const ProducerSignupForm = forwardRef<ProducerSignupFormRef, ProducerSignupFormP
   };
 
   const handleSubmit: SubmitHandler<ProducerSignupData> = async (data) => {
-    console.log("📋 Producer signup data:", data);
-    console.log("❌ Form errors:", form.formState.errors);
-    console.log("✅ Form valid:", form.formState.isValid);
+    // console.log("📋 Producer signup data:", data);
+    // console.log("❌ Form errors:", form.formState.errors);
+    // console.log("✅ Form valid:", form.formState.isValid);
     
     try {
       await onSubmit(data);
@@ -153,7 +153,6 @@ const ProducerSignupForm = forwardRef<ProducerSignupFormRef, ProducerSignupFormP
           className="space-y-6"
           onSubmitCapture={() => console.log("🎯 Form submit event captured")}
         >
-          {/* Primeira linha: Nome Completo, Tipo de Documento, Número do Documento */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <FormField
               control={form.control}
@@ -246,7 +245,6 @@ const ProducerSignupForm = forwardRef<ProducerSignupFormRef, ProducerSignupFormP
             />
           </div>
 
-          {/* Segunda linha: Telefone, Email */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormField
               control={form.control}
@@ -288,7 +286,6 @@ const ProducerSignupForm = forwardRef<ProducerSignupFormRef, ProducerSignupFormP
             />
           </div>
 
-          {/* Terceira linha: Endereço, Número, CEP */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <FormField
               control={form.control}
@@ -408,7 +405,6 @@ const ProducerSignupForm = forwardRef<ProducerSignupFormRef, ProducerSignupFormP
             />
           </div>
 
-          {/* Quinta linha: Empresa Parceira, Senha */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormField
               control={form.control}

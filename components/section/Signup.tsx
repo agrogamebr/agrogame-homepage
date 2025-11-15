@@ -43,34 +43,13 @@ export default function SignupSection() {
         result.message || 'Cadastro de empresa realizado com sucesso!',
         'success'
       );
-      console.log("✅ Empresa cadastrada com sucesso:", result);
       
       companyFormRef.current?.reset();
       
     } catch (error) {
-      console.error("❌ Erro completo ao cadastrar empresa:", error);
-      
-      let errorMessage = 'Erro inesperado ao cadastrar empresa';
-      
-      if (error instanceof Error) {
-        errorMessage = error.message;
-      }
-
-      console.log("Singup ERROR: ", errorMessage);
-
-      if (errorMessage.toLowerCase().includes('cnpj')) {
-        errorMessage = 'CNPJ inválido ou já cadastrado';
-      } else if (errorMessage.toLowerCase().includes('email') || errorMessage.toLowerCase().includes('e-mail')) {
-        errorMessage = 'Email já cadastrado ou inválido';
-      } else if (errorMessage.toLowerCase().includes('network') || errorMessage.toLowerCase().includes('fetch')) {
-        errorMessage = 'Erro de conexão. Verifique sua internet e tente novamente';
-      } else if (errorMessage.toLowerCase().includes('timeout')) {
-        errorMessage = 'Tempo de resposta excedido. Tente novamente';
-      } else if (errorMessage.toLowerCase().includes('400')) {
-        errorMessage = 'Dados inválidos. Verifique as informações e tente novamente';
-      } else if (errorMessage.toLowerCase().includes('500')) {
-        errorMessage = 'Erro no servidor. Tente novamente mais tarde';
-      }
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : 'Erro ao cadastrar empresa';
       
       showToast(errorMessage, 'error');
     }
@@ -84,34 +63,13 @@ export default function SignupSection() {
         result.message || 'Cadastro de produtor realizado com sucesso!',
         'success'
       );
-      console.log("✅ Produtor cadastrado com sucesso:", result);
       
-      // Resetar formulário após sucesso
       producerFormRef.current?.reset();
       
     } catch (error) {
-      console.error("❌ Erro ao cadastrar produtor:", error);
-      
-      let errorMessage = 'Erro inesperado ao cadastrar produtor';
-      
-      if (error instanceof Error) {
-        errorMessage = error.message;
-      }
-
-      // Tratamento específico de erros
-      if (errorMessage.toLowerCase().includes('cpf') || errorMessage.toLowerCase().includes('documento')) {
-        errorMessage = 'Documento inválido ou já cadastrado';
-      } else if (errorMessage.toLowerCase().includes('email') || errorMessage.toLowerCase().includes('e-mail')) {
-        errorMessage = 'Email já cadastrado ou inválido';
-      } else if (errorMessage.toLowerCase().includes('network') || errorMessage.toLowerCase().includes('fetch')) {
-        errorMessage = 'Erro de conexão. Verifique sua internet e tente novamente';
-      } else if (errorMessage.toLowerCase().includes('timeout')) {
-        errorMessage = 'Tempo de resposta excedido. Tente novamente';
-      } else if (errorMessage.toLowerCase().includes('400')) {
-        errorMessage = 'Dados inválidos. Verifique as informações e tente novamente';
-      } else if (errorMessage.toLowerCase().includes('500')) {
-        errorMessage = 'Erro no servidor. Tente novamente mais tarde';
-      }
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : 'Erro ao cadastrar produtor';
       
       showToast(errorMessage, 'error');
     }

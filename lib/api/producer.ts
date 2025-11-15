@@ -24,8 +24,6 @@ const createProducer = async (data: ProducerSignupData): Promise<ProducerCreateR
   try {
     const apiData = mapFormToApi(data);
     
-    console.log("🔄 Dados enviados para API (Produtor):", apiData);
-    
     const response = await api
       .post("api/producer/register", {
         json: apiData,
@@ -37,11 +35,8 @@ const createProducer = async (data: ProducerSignupData): Promise<ProducerCreateR
 
     return response;
   } catch (error: unknown) {
-    console.error("❌ Erro capturado:", error);
-
-    // Tentar extrair mensagem de erro da resposta
     if (error && typeof error === 'object' && 'response' in error) {
-      const apiError = error as { response?: Response; message?: string };
+      const apiError = error as { response?: Response };
       
       if (apiError.response) {
         try {
@@ -51,9 +46,7 @@ const createProducer = async (data: ProducerSignupData): Promise<ProducerCreateR
             errors?: Record<string, string[]>;
           };
           
-          console.log("📋 Dados de erro da API:", errorData);
-          
-          // Priorizar mensagem de erro mais específica
+          // Prioridade: message > error > errors (concatenados)
           const errorMessage = 
             errorData.message || 
             errorData.error || 
@@ -63,26 +56,18 @@ const createProducer = async (data: ProducerSignupData): Promise<ProducerCreateR
             throw new Error(errorMessage);
           }
         } catch (jsonError) {
-          // Se falhar ao parsear JSON, verificar se o erro original tem mensagem
-          if (apiError.message && apiError.message !== 'Erro ao cadastrar produtor') {
-            throw new Error(apiError.message);
+          // Se não conseguir parsear, continua para o erro genérico
+          if (jsonError instanceof Error && jsonError.message !== 'Erro ao cadastrar produtor') {
+            throw jsonError;
           }
-          console.error("❌ Erro ao parsear resposta JSON:", jsonError);
         }
-      }
-      
-      // Se chegou aqui e o erro tem mensagem, usar ela
-      if (apiError.message) {
-        throw new Error(apiError.message);
       }
     }
     
-    // Se for um Error comum
     if (error instanceof Error) {
       throw error;
     }
     
-    // Apenas em último caso, usar mensagem genérica
     throw new Error("Erro ao cadastrar produtor");
   }
 };
@@ -90,12 +75,6 @@ const createProducer = async (data: ProducerSignupData): Promise<ProducerCreateR
 export const useCreateProducer = () => {
   return useMutation({
     mutationFn: createProducer,
-    onSuccess: (data) => {
-      console.log("✅ Produtor rural cadastrado com sucesso:", data);
-    },
-    onError: (error) => {
-      console.error("❌ Erro ao cadastrar produtor rural:", error);
-    },
   });
 };
 
