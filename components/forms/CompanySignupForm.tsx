@@ -23,7 +23,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { companySignupSchema, type CompanySignupData, mapFormToApi } from "@/lib/schemas/companySignup";
+import { companySignupSchema, type CompanySignupData } from "@/lib/schemas/companySignup";
 import { BRAZILIAN_STATES } from "@/lib/constants";
 import { useCities } from "@/lib/services/ibge";
 import { useCompanyTypes } from "@/lib/api/company";
@@ -84,23 +84,12 @@ const CompanySignupForm = forwardRef<CompanySignupFormRef, CompanySignupFormProp
   };
 
   const handleSubmit: SubmitHandler<CompanySignupData> = async (data) => {
-    // console.log("📋 Company signup data:", data);
-    // console.log("🔄 Dados após mapeamento para API:", mapFormToApi(data));
-    // console.log("❌ Form errors:", form.formState.errors);
-    // console.log("✅ Form valid:", form.formState.isValid);
-    
     try {
       await onSubmit(data);
     } catch (error) {
       console.error("❌ Erro no handleSubmit:", error);
     }
   };
-
-  console.log("🔍 Form state:", {
-    isSubmitting: form.formState.isSubmitting,
-    isValid: form.formState.isValid,
-    errors: form.formState.errors
-  });
 
   const formatCNPJ = (value: string) => {
     const numbers = value.replace(/\D/g, "");
@@ -148,7 +137,6 @@ const CompanySignupForm = forwardRef<CompanySignupFormRef, CompanySignupFormProp
         <form 
           onSubmit={form.handleSubmit(handleSubmit)} 
           className="space-y-6"
-          onSubmitCapture={() => console.log("🎯 Form submit event captured")}
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormField
@@ -210,7 +198,7 @@ const CompanySignupForm = forwardRef<CompanySignupFormRef, CompanySignupFormProp
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {companyTypes?.map((type) => (
+                    {Array.isArray(companyTypes) && companyTypes.map((type) => (
                       <SelectItem key={type.id} value={type.id.toString()}>
                         {type.name}
                       </SelectItem>
@@ -473,7 +461,6 @@ const CompanySignupForm = forwardRef<CompanySignupFormRef, CompanySignupFormProp
             type="submit"
             className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-md font-medium cursor-pointer"
             disabled={form.formState.isSubmitting}
-            onClick={() => console.log("🔘 Botão submit clicado")}
           >
             {form.formState.isSubmitting ? "Realizando Cadastro..." : "Realizar Cadastro"}
           </Button>
