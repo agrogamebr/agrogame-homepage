@@ -3,8 +3,12 @@ import { api, handleApiError } from "@/lib/api";
 import { CompanySignupData, mapFormToApi } from "@/lib/schemas/companySignup";
 
 export interface CompanyType {
-  id: string;
+  id: number;
+  code: string;
   name: string;
+  description: string;
+  isActive: boolean;
+  createdAt: string;
 }
 
 interface CompanyCreateResponse {
@@ -79,9 +83,18 @@ export const useCreateCompany = () => {
 
 export const fetchCompanyTypes = async (): Promise<CompanyType[]> => {
   try {
-    const response = await api.get("api/company/company-types").json<CompanyType[]>();
-    return response;
+    const response = await api.get("api/company/company-types").json<{
+      count: number;
+      items: CompanyType[];
+    }>();
+    
+    if (response && response.items && Array.isArray(response.items)) {
+      return response.items.filter(type => type.isActive);
+    }
+    
+    return [];
   } catch (error) {
+    console.error("❌ Erro ao buscar company types:", error);
     throw handleApiError(error);
   }
 };
