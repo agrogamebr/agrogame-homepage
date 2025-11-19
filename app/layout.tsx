@@ -17,7 +17,23 @@ export const metadata: Metadata = {
   title: "AgroGame - Transforme o relacionamento em benefícios",
   icons: {
     icon: "/white-game.svg",
-  }
+  },
+  openGraph: {
+    title: "AgroGame - Transforme o relacionamento em benefícios",
+    description: "Plataforma gamificada para o agronegócio",
+    url: "https://agrogame-homepage-1017408486443.us-central1.run.app",
+    siteName: "AgroGame",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "AgroGame - Plataforma Gamificada",
+      },
+    ],
+    locale: "pt_BR",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
