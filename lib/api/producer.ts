@@ -79,8 +79,9 @@ export const useCreateProducer = () => {
 export const fetchDocumentTypes = async (): Promise<DocumentType[]> => {
   try {
     const response = await api.get("api/producer/document-types").json<{ count: number; items: DocumentType[] }>();
-    return response.items;
+    return response.items || [];
   } catch (error) {
+    console.error("Error fetching document types:", error);
     throw handleApiError(error);
   }
 };
@@ -95,9 +96,10 @@ export const useDocumentTypes = () => {
 
 export const fetchActiveCompanies = async (): Promise<ActiveCompany[]> => {
   try {
-    const response = await api.get("api/producer/companies/active").json<{ count: number; items: ActiveCompany[] }>();
-    return response.items;
+    const response = await api.get("api/producer/companies/active").json<ActiveCompany[]>();
+    return response || [];
   } catch (error) {
+    console.error("Error fetching active companies:", error);
     throw handleApiError(error);
   }
 };
