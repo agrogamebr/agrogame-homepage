@@ -7,7 +7,10 @@ steps:
       - 'us-central1-docker.pkg.dev/agrogame/agrogame-repo/agrogame-homepage:latest-hml'
       - '--build-arg'
       - 'NEXT_PUBLIC_ENVIRONMENT=HML'
-      - '.'
+      - '--build-arg'
+      - 'NEXT_PUBLIC_API_URL=https://hml-api.agribit.com.br'
+      - '--build-arg'
+      - 'NEXT_PUBLIC_APP_NAME=AgroGame HomePage HML/STG'
 
   # Step 1: Push da imagem
   - name: 'gcr.io/cloud-builders/docker'
