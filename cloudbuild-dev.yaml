@@ -3,45 +3,41 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'build'
-      - '--build-arg'
-      - 'BUILDKIT_INLINE_CACHE=1'
       - '-t'
       - 'us-central1-docker.pkg.dev/agrogame/agrogame-repo/agrogame-homepage:$SHORT_SHA'
-      - '-t'
-      - 'us-central1-docker.pkg.dev/agrogame/agrogame-repo/agrogame-homepage:develop'
+      - '--build-arg'
+      - 'NEXT_PUBLIC_ENVIRONMENT=development'
       - '.'
 
-  # Step 1: Push da imagem com SHORT_SHA
+  # Step 1: Push da imagem
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
       - 'us-central1-docker.pkg.dev/agrogame/agrogame-repo/agrogame-homepage:$SHORT_SHA'
 
-  # Step 2: Push da imagem com tag develop
-  - name: 'gcr.io/cloud-builders/docker'
-    args:
-      - 'push'
-      - 'us-central1-docker.pkg.dev/agrogame/agrogame-repo/agrogame-homepage:develop'
 
   # Step 3: Deploy no Cloud Run
   - name: 'gcr.io/cloud-builders/gcloud'
     args:
       - 'run'
       - 'deploy'
-      - '${_CLOUD_RUN_SERVICE}'
+      - 'agrogame-homepage-hml'
       - '--image'
-      - 'us-central1-docker.pkg.dev/agrogame/agrogame-repo/agrogame-homepage:${SHORT_SHA}'
+      - 'us-central1-docker.pkg.dev/agrogame/agrogame-repo/agrogame-homepage:$SHORT_SHA'
+      - '--service-account'
+      - 'bitbucket-deployer@$PROJECT_ID.iam.gserviceaccount.com'
       - '--region'
       - 'us-central1'
       - '--platform'
       - 'managed'
       - '--allow-unauthenticated'
+      - '--no-cpu-throttling'
+      - '--quiet'
 
-images:
-  - 'us-central1-docker.pkg.dev/agrogame/agrogame-repo/agrogame-homepage:$SHORT_SHA'
-  - 'us-central1-docker.pkg.dev/agrogame/agrogame-repo/agrogame-homepage:develop'
-
-timeout: '1800s'
+timeout: '3600s'
 
 options:
   logging: CLOUD_LOGGING_ONLY
+
+images:
+  - 'us-central1-docker.pkg.dev/agrogame/agrogame-repo/agrogame-homepage:$SHORT_SHA'
