@@ -1,0 +1,36 @@
+steps:
+  # Step 0: Build da imagem Docker
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/agrogame/agrogame-repo/agrogame-homepage:latest-hml'
+      - '--build-arg'
+      - 'NEXT_PUBLIC_ENVIRONMENT=HML'
+      - '.'
+
+  # Step 1: Push da imagem
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'us-central1-docker.pkg.dev/agrogame/agrogame-repo/agrogame-homepage:latest-hml'
+
+
+  # Step 3: Deploy no Cloud Run
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'agrogame-homepage-hml'
+      - '--image=us-central1-docker.pkg.dev/agrogame/agrogame-repo/agrogame-homepage:latest-hml'
+      - '--service-account=bitbucket-deployer@$PROJECT_ID.iam.gserviceaccount.com'
+      - '--region=us-central1'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+      - '--no-cpu-throttling'
+      - '--quiet'
+
+timeout: '3600s'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
