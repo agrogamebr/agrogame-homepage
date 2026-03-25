@@ -12,6 +12,8 @@ steps:
     id: "Build Application"
     env:
       - "NEXT_PUBLIC_ENVIRONMENT=CI_TEST"
+      - 'NEXT_PUBLIC_API_URL=https://ci-placeholder.agribit.com.br'
+      - 'NEXT_PUBLIC_APP_NAME=AgroGame CI'
 
 # A seção 'options' para garantir que os logs funcionem com a conta de serviço
 options:
