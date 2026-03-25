@@ -4,19 +4,20 @@ steps:
     args:
       - 'build'
       - '-t'
-      - 'us-central1-docker.pkg.dev/agrogame/agrogame-repo/agrogame-homepage:latest-hml'
+      - 'us-central1-docker.pkg.dev/agrogame/agrogame-repo/agrogame-homepage:$SHORT_SHA'
       - '--build-arg'
       - 'NEXT_PUBLIC_ENVIRONMENT=HML'
       - '--build-arg'
       - 'NEXT_PUBLIC_API_URL=https://hml-api.agribit.com.br'
       - '--build-arg'
       - 'NEXT_PUBLIC_APP_NAME=AgroGame HomePage HML/STG'
+      - '.'
 
   # Step 1: Push da imagem
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
-      - 'us-central1-docker.pkg.dev/agrogame/agrogame-repo/agrogame-homepage:latest-hml'
+      - 'us-central1-docker.pkg.dev/agrogame/agrogame-repo/agrogame-homepage:$SHORT_SHA'
 
 
   # Step 3: Deploy no Cloud Run
@@ -26,7 +27,7 @@ steps:
       - 'deploy'
       - 'agrogame-homepage-hml'
       - '--image'
-      - 'us-central1-docker.pkg.dev/agrogame/agrogame-repo/agrogame-homepage:latest-hml'
+      - 'us-central1-docker.pkg.dev/agrogame/agrogame-repo/agrogame-homepage:$SHORT_SHA'
       - '--service-account'
       - 'bitbucket-deployer@$PROJECT_ID.iam.gserviceaccount.com'
       - '--region'
@@ -34,7 +35,6 @@ steps:
       - '--platform'
       - 'managed'
       - '--allow-unauthenticated'
-      - '--no-cpu-throttling'
       - '--quiet'
 
 timeout: '3600s'
@@ -43,4 +43,4 @@ options:
   logging: CLOUD_LOGGING_ONLY
 
 images:
-  - 'us-central1-docker.pkg.dev/agrogame/agrogame-repo/agrogame-homepage:latest-hml'
+  - 'us-central1-docker.pkg.dev/agrogame/agrogame-repo/agrogame-homepage:$SHORT_SHA'
