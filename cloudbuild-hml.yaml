@@ -22,10 +22,14 @@ steps:
       - 'run'
       - 'deploy'
       - 'agrogame-homepage-hml'
-      - '--image=us-central1-docker.pkg.dev/agrogame/agrogame-repo/agrogame-homepage:latest-hml'
-      - '--service-account=bitbucket-deployer@$PROJECT_ID.iam.gserviceaccount.com'
-      - '--region=us-central1'
-      - '--platform=managed'
+      - '--image'
+      - 'us-central1-docker.pkg.dev/agrogame/agrogame-repo/agrogame-homepage:latest-hml'
+      - '--service-account'
+      - 'bitbucket-deployer@$PROJECT_ID.iam.gserviceaccount.com'
+      - '--region'
+      - 'us-central1'
+      - '--platform'
+      - 'managed'
       - '--allow-unauthenticated'
       - '--no-cpu-throttling'
       - '--quiet'
@@ -34,3 +38,6 @@ timeout: '3600s'
 
 options:
   logging: CLOUD_LOGGING_ONLY
+
+images:
+  - 'us-central1-docker.pkg.dev/agrogame/agrogame-repo/agrogame-homepage:latest-hml'
