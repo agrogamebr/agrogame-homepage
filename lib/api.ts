@@ -1,6 +1,12 @@
 import ky from "ky";
 
-const API_BASE_URL = "https://agrogame-api-dev-1017408486443.us-central1.run.app";
+// Usa a variável de ambiente ou um fallback para desenvolvimento local
+const API_BASE_URL = 
+  process.env.NEXT_PUBLIC_API_URL || 
+  "https://agrogame-api-dev-1017408486443.us-central1.run.app";
+
+const isDevelopment = process.env.NEXT_PUBLIC_ENVIRONMENT === "development" || 
+                     process.env.NODE_ENV === "development";
 
 export const api = ky.create({
   prefixUrl: API_BASE_URL,
@@ -13,7 +19,7 @@ export const api = ky.create({
   hooks: {
     beforeRequest: [
       (request) => {
-        if (process.env.NODE_ENV === "development") {
+        if (isDevelopment) {
           console.log("🚀 API Request:", {
             url: request.url,
             method: request.method,
@@ -24,7 +30,7 @@ export const api = ky.create({
     ],
     afterResponse: [
       (request, options, response) => {
-        if (process.env.NODE_ENV === "development") {
+        if (isDevelopment) {
           console.log("✅ API Response:", {
             url: request.url,
             status: response.status,
@@ -35,7 +41,7 @@ export const api = ky.create({
     ],
     beforeError: [
       (error) => {
-        if (process.env.NODE_ENV === "development") {
+        if (isDevelopment) {
           console.error("❌ API Error:", {
             name: error.name,
             message: error.message,
