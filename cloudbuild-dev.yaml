@@ -10,7 +10,8 @@ steps:
       - '--build-arg'
       - 'NEXT_PUBLIC_API_URL=https://agrogame-api-dev-1017408486443.us-central1.run.app'
       - '--build-arg'
-      - 'NEXT_PUBLIC_APP_NAME=AgroGame Dev'
+      - 'NEXT_PUBLIC_APP_NAME=AgroGame HomePage Dev'
+      - '.'
 
   # Step 1: Push da imagem
   - name: 'gcr.io/cloud-builders/docker'
