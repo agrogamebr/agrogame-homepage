@@ -137,7 +137,10 @@ export default function Footer() {
 
         <div className="border-t border-gray-600 mt-12 pt-6">
           <p className="text-gray-400 text-sm text-center">
-            © 2025 Agrogame. Todos os direitos reservados.
+            &copy; {new Date().getFullYear()} CAMPO BRASIL REPRESENTACAO E CONSULTORIA AMBIENTAL E AGROPECUARIA LTDA.<br />
+            <span className="block mt-1">Agrogame é um produto desenvolvido por Agribit.</span>
+            <span className="block mt-1 text-xs">CNPJ: 19.728.284/0001-05 | Rua Uberlandia S/N, Lote 11 Quadra D, Araguari, MG - 38440-038</span>
+            <span className="block mt-1 text-xs">Contato: <a href="mailto:contato@agribit.com.br" className="hover:text-white transition-colors duration-200">contato@agribit.com.br</a></span>
           </p>
         </div>
       </div>
