@@ -57,10 +57,10 @@ export default function Header() {
             </div>
           </div>
 
-          <div className="hidden lg:flex items-center space-x-2 shrink-0">
+          <div className="!hidden lg:flex items-center space-x-2 shrink-0">
             <Button
               onClick={() => scrollToElement('signup')}
-              className="bg-blue-600 text-white px-2 xl:px-4 py-2 rounded-md text-xs xl:text-sm font-medium hover:bg-blue-700 transition-colors duration-200 whitespace-nowrap leading-tight h-auto cursor-pointer"
+              className="hidden bg-blue-600 text-white px-2 xl:px-4 py-2 rounded-md text-xs xl:text-sm font-medium hover:bg-blue-700 transition-colors duration-200 whitespace-nowrap leading-tight h-auto cursor-pointer"
               title="Quero Fazer Parte Do Agro Game"
             >
               <span className="xl:hidden">Fazer Parte</span>
@@ -73,8 +73,7 @@ export default function Header() {
               Login
             </Link> */}
           </div>
-
-          <div className="hidden md:block lg:hidden">
+          <div className="!hidden md:block lg:hidden">
             <Button
               onClick={() => scrollToElement('signup')}
               className="bg-blue-600 text-white px-3 py-2 rounded-sm text-xs font-medium hover:bg-blue-700 transition-colors duration-200 h-auto cursor-pointer"
@@ -110,7 +109,7 @@ export default function Header() {
                   {item.name}
                 </Link>
               ))}
-              <div className="pt-4 space-y-2">
+              <div className="pt-4 space-y-2 hidden">
                 <Button
                   onClick={() => {
                     scrollToElement('signup');

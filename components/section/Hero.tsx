@@ -25,7 +25,7 @@ export default function Hero() {
               resultado.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 mb-8">
+            <div className="flex flex-col sm:flex-row gap-4 mb-8 hidden">
               <Button
                 onClick={() => scrollToSignup('company')}
                 className="bg-blue-600 text-white px-6 py-3 rounded-md text-base font-medium hover:bg-blue-700 transition-colors duration-200 inline-flex items-center justify-center gap-2 min-w-fit h-auto cursor-pointer"

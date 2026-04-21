@@ -57,7 +57,7 @@ export default function ForCompanies() {
               onClick={() => {
                 scrollToElement('signup');
               }}
-              className="inline-flex items-center bg-blue-600 text-white 
+              className="hidden inline-flex items-center bg-blue-600 text-white 
                         px-8 py-3 rounded-lg gap-3
                         font-semibold hover:bg-blue-700 transition-colors duration-200
                         text-sm lg:text-base

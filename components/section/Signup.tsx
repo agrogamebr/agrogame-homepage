@@ -14,6 +14,7 @@ import ProducerSignupForm from "../forms/ProducerSignupForm";
 import type { ProducerSignupFormRef } from "../forms/ProducerSignupForm";
 
 export default function SignupSection() {
+   return null; // Ocultado para review da Apple
   const [selectedType, setSelectedType] = useState<boolean>(false); // false = empresa, true = produtor
   const companyFormRef = useRef<CompanySignupFormRef>(null);
   const producerFormRef = useRef<ProducerSignupFormRef>(null);
